@@ -1,3 +1,4 @@
+
 # ipak function: install and load multiple R packages.
 # check to see if packages are installed. Install them if they are not, then load them into the R session.
 
@@ -13,6 +14,7 @@ packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot
 ipak(packages)
 #my_packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
 #install.packages(my_packages, repos = "http://cran.rstudio.com")
+
 library(rio)
 RAW_Dec_2018 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/bff30a97de4611da7172295f0b25c090770e41ab/Oct%202018.xlsx?raw=true', na="N/A")
 View(RAW_Dec_2018)
@@ -730,3 +732,13 @@ ppd %>%
   #just change the name of the package in the ""
 
 ##IMPORTANT: remove those meditators who slept. MM5 and MM4 probably
+#Meditation matlab
+library(R.matlab)
+data <- readMat("/Users/mohdasti/Downloads/MM2\ copy.mat")
+View(data$data[data$datastart[1]:data$dataend[1]])
+View(data$data[data$com[data$comtext == "start     ",3]:data$dataend[length(data$dataend)]])
+install.packages("eegkit")
+library(eegkit)
+eegcap("10-20")
+
+eegpsd(data$data[data$com[data$comtext == "start     ",3]:data$dataend[length(data$dataend)]], 1000, 50)

@@ -1,0 +1,69 @@
+---
+title: "Appendix"
+output:
+  rmarkdown::pdf_document:
+    fig_caption: yes        
+    includes:  
+      in_header: Appendix/preamble-latex.tex
+---
+#Appendix A.
+```{r, fig.cap = "Poster of the study.", out.width="70%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Poster.jpg')
+```
+\newpage
+#Appendix B.
+```{r, fig.cap = "General Research Ethics Board approval of the study.", out.width="70%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Ethics_approval.pdf')
+```
+\newpage
+#Appendix C.
+```{r, out.width="95%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Consent_pg1.pdf')
+```
+##Appendix C. cont.
+```{r, out.width="95%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Consent_pg2.pdf')
+```
+##Appendix C. cont.
+```{r, fig.cap = "Letter of information and consent form for data collection and protection.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Consent_pg3.pdf')
+```
+\newpage
+#Appendix D.
+```{r, out.width="95%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Participant_information_survey_pg1.pdf')
+```
+##Appendix D. cont.
+```{r, fig.cap = "Participant Information Survey.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Participant_information_survey_pg2.pdf')
+```
+\newpage
+#Appendix E.
+```{r, fig.cap = "Freiburg Mindfulness Inventory.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Freiburg_Mindfulness_Inventory.pdf')
+```
+\newpage
+#Appendix F.
+```{r, fig.cap = "Self-report Questionaire for the wake condition.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Self_report_wake.png')
+```
+\newpage
+#Appendix G.
+```{r, fig.cap = "Self-report Questionaire for the meditation condition.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Self_report_meditation.png')
+```
+\newpage
+#Appendix H.
+```{r, fig.cap = "Self-report Questionaire for the sleep condition.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Self_report_sleep.png')
+```
+\newpage
+#Appendix I.
+```{r, fig.cap = "Epworth Sleepiness Scale.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Epworth.pdf')
+```
+\newpage
+#Appendix J.
+```{r, fig.cap = "Debriefing and explanation of the study.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/Debrief.png')
+```

@@ -1,0 +1,67 @@
+---
+title: "Methods"
+author: "Mohammad Dastgheib"
+date: '2019-01-08'
+output:
+  pdf_document:
+    fig_caption: yes
+  html_document:
+    df_print: paged
+header-includes: \usepackage{placeins}
+csl: apa.csl
+bibliography:
+- References.bib
+- r_references.bib
+---
+```{r setup, include=FALSE}
+RAW_Dec_2018 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/bff30a97de4611da7172295f0b25c090770e41ab/Oct%202018.xlsx?raw=true', na="N/A")
+```
+
+# Methods
+## Design
+This study followed of a pilot experimet, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment.  
+This study comprised of two main parts: The *Initial interview* and the *Experiment*. It was beneficial for participants to familiarize themselves with the study and testing environment before commencing the main experiment. Thus, during the initial interview, the researcher showed the facility to participants, and asked them to sign the Letter of Information and Consent, the Participant Information Survey and the “Freiburg Mindfulness Inventory” [@walach2006measuring] (See Appendix C, D, E). Based on the participant’s responses and history of activities, the researcher assigned him/her to one of the three experimental conditions (random assignment for napping/wake conditions). \newline
+All experimental procedures were conducted between 2:00 to 7:00 p.m. Participants arrived at the Sleep Laboratory, completed the “Epworth Sleepiness Scale”[@johns1991new], then were assigned to start with the paired associates (word-pair) task to assess declarative memory, and the marble maze task to assess non-declarative memory (all post-treatment tasks are completed in a counterbalanced order). After completing the training tasks, then participants were prepared for the electroencephalography (EEG), electro-oculography (EOG), and electromyography (EMG) recordings and informed of their assigned condition (meditation, nap, wake). Following the completion of the electrode set-up and calibration procedure, participants spent 60 minutes in a quiet room. For the wake condition, participants watched the documentary movie “Planet Earth” [@Fothergill2007] on a computer screen. Participants in the meditation condition were asked to complete a self-guided meditation session, and for the nap condition, they were instructed to sleep in the bed. During this period, subjects’ brain activity was monitored with polysomnography. \newline
+After the hour-long treatment, the researcher informed the participant that the hour is completed. After removing the electrodes, depending on their treatment condition, participants completed a self-report on the quality of their activity in the room, and a post-treatment ESS questionnaire (See Appendix F, G, H, I). Subsequently, they were asked to complete 50 trials of the maze task and the word-pair recall test. At the end, participants were debriefed (see Appendix J) and given monetary compensation. The overall study design is illustrated in \autoref{timelinelabel}.
+
+<!-- the pdf file is floating and must be fixed right here! --> 
+
+```{r, fig.cap = "Timeline Diagram Illustrating the Study Design. FMI = Freiburg Mindfulness Inventory. ESS = Epworth Sleepiness Scale. \\label{timelinelabel}", fig.pos = 'h', echo=FALSE}
+knitr::include_graphics('Figures/timeline.pdf')
+```
+
+## Participants
+Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Dec_2018)` completed the study. However, <!-- add Asvini's work into that and check for those who f-ed the experiment --> failed to meet the experiment critrtia (e.g. participants who dozed off during the meditation session), leaving us with <!-- final number --> of participants.
+
+##Measures of sleep
+Polysomnography will be recorded employing standard procedures, as follows: \textsc{eeg}: O1-F7, O2-C4, according to the 10-20 system, with bilateral mastoid references; \textsc{eog}, right and left outer canthus, with the bridge of the nose as reference; and \textsc{emg} recorded at the chin for assessing jaw muscle tone. \autoref{eegcaplabel} shows the schematic illustration of \textsc{eeg} electrode placements All signals are recorded using the software package Chart (v. 5, AD Instruments, Toronto, Ontario). Recordings are visually scored according to standard criteria by a trained rater under blind conditions [@sleep2001proposed].
+``` {r include=FALSE}
+ipak2 <- function(pkg){
+  new.pkg2 <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg2)) 
+    install.packages(new.pkg2, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+packages <- c("eegkitdata","bigsplines","quadprog","ica","signal","rgl","eegkit")
+ipak2(packages)
+```
+
+``` {r, fig.cap = "Schematic representation of employed electroed in the 10-20 system. \\label{eegcaplabel}",fig.pos = 'h', echo = FALSE }
+
+myelectrodes <- rep("light blue",24)
+enames <- c("A1", "A2", "FP1", "FP2", "FPZ", "F7", "F3", "FZ", "F4", "F8", "NZ", "T7", "C3", "CZ", "C4", "T8", "P7", "P3", "PZ", "P4", "P8", "O1", "O2", "OZ")
+myelectrodes[enames=="A1"] <- "red"
+myelectrodes[enames=="A2"] <- "red"
+myelectrodes[enames=="C4"] <- "red"
+myelectrodes[enames=="F7"] <- "red"
+myelectrodes[enames=="O1"] <- "red"
+myelectrodes[enames=="O2"] <- "red"
+
+eegcap(electrodes = "10-20", col.point = myelectrodes)
+```
+
+The following parameters will be computed: number of arousals, sleep onset latency, Stage 1 sleep, Stage 2 sleep, slow wave sleep (\textsc{sws}), and total sleep time. For participants in the wake and meditation condition, the \textsc{eeg} is reviewed to confirm that sleep did not occur. For meditators, spectral analysis using fast Fourier transform is applied to assess the mean power spectral density in the frequency bands of interest (0.5-50 Hz).
+
+
+# References
+
