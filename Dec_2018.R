@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
->>>>>>> d5a2b198159e745efd08d984434daea81f3fd1ee
 # ipak function: install and load multiple R packages.
 # check to see if packages are installed. Install them if they are not, then load them into the R session.
 
@@ -18,14 +14,7 @@ packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot
 ipak(packages)
 #my_packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
 #install.packages(my_packages, repos = "http://cran.rstudio.com")
-<<<<<<< HEAD
 
-=======
-=======
-my_packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
-install.packages(my_packages, repos = "http://cran.rstudio.com")
->>>>>>> cc602b81e1256058cbffdf2a047a6a7e29e22fe9
->>>>>>> d5a2b198159e745efd08d984434daea81f3fd1ee
 library(rio)
 RAW_Dec_2018 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/bff30a97de4611da7172295f0b25c090770e41ab/Oct%202018.xlsx?raw=true', na="N/A")
 View(RAW_Dec_2018)
