@@ -7,7 +7,7 @@ output:
       in_header: Appendix/preamble-latex.tex
 ---
 #Appendix A.
-```{r, fig.cap = "Poster of the study.", out.width="70%", fig.align="center", echo=FALSE}
+```{r, fig.cap = "Poster of the study. \\label{poster}", out.width="70%", fig.align="center", echo=FALSE}
 knitr::include_graphics('Appendix/Poster.jpg')
 ```
 \newpage

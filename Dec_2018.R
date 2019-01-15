@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> d5a2b198159e745efd08d984434daea81f3fd1ee
 # ipak function: install and load multiple R packages.
 # check to see if packages are installed. Install them if they are not, then load them into the R session.
 
@@ -14,7 +18,14 @@ packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot
 ipak(packages)
 #my_packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
 #install.packages(my_packages, repos = "http://cran.rstudio.com")
+<<<<<<< HEAD
 
+=======
+=======
+my_packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
+install.packages(my_packages, repos = "http://cran.rstudio.com")
+>>>>>>> cc602b81e1256058cbffdf2a047a6a7e29e22fe9
+>>>>>>> d5a2b198159e745efd08d984434daea81f3fd1ee
 library(rio)
 RAW_Dec_2018 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/bff30a97de4611da7172295f0b25c090770e41ab/Oct%202018.xlsx?raw=true', na="N/A")
 View(RAW_Dec_2018)
@@ -65,7 +76,6 @@ pairwise.t.test(RAW$ESSdifference, RAW$Condition, p.adjust.method = "holm")
 leveneTest(anova1) #Brown-Forsyth Test
 leveneTest(anova1, center = mean) #Levene's Test
 #filtering napper based on their sleep profile
-library(dplyr)
 SWS_nappers <- filter(RAW, `percent SWS` != 0.0) #nappers who showed SWS
 # Dummy variables for gender and handedness ----
 RAW$binary.gender <-
@@ -146,7 +156,6 @@ Anova(GMean.contrastcoding.aov, type = 3)
 #for quantitative explanatory variables, which test is used to check for the homogeneity of variance??
 # other explorartory analyses - main effect of gender or handedness -----
 #main effect of gender
-library(dplyr)
 menonly <- filter(RAW, Gender == "M")
 femaleonly <- filter(RAW, Gender == "F")
 #main effect of handedness
@@ -498,6 +507,7 @@ ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
 # for Motor-task:
 #make sure to check for those outliers that I have selected above. These excel files may still contain those.
 library(readxl)
+
 nonSWS_repeated <- read_excel("Downloads/Sleep & Meditation & Memory articles/Analysis/R analysis/Oct 2018/Rep.Mes.ANOVAs/nonSWS repeated.xlsx", 
                               na = "N/A")
 View(nonSWS_repeated)
@@ -522,7 +532,7 @@ print(analyze(fit_RM_nonSWS))
 
 results_RM_nonSWS <- get_contrasts(fit_RM_nonSWS, "Condition")
 print(results_RM_nonSWS$contrasts)
-results_RM_SWS$means
+results_RM_nonSWS$means
 
 ggplot(results_RM_nonSWS$means, aes(x=Condition, y=Mean, group=1)) +
   geom_line() +
