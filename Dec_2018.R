@@ -497,8 +497,7 @@ ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
 #make sure to check for those outliers that I have selected above. These excel files may still contain those.
 library(readxl)
 
-nonSWS_repeated <- read_excel("Downloads/Sleep & Meditation & Memory articles/Analysis/R analysis/Oct 2018/Rep.Mes.ANOVAs/nonSWS repeated.xlsx", 
-                              na = "N/A")
+nonSWS_repeated <- read_excel("GitHub\`Queens-Thesis`\`Raw data`\`Repeated measures`\nonSWS_repeated.xlsx",na = "N/A")
 View(nonSWS_repeated)
 
 SWS_repeated_measures <- read_excel("Downloads/Sleep & Meditation & Memory articles/Analysis/R analysis/Oct 2018/Rep.Mes.ANOVAs/SWS repeated measures.xlsx", 
