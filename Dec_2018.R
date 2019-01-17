@@ -515,7 +515,7 @@ library(Matrix)
 library(lmerTest)
 
 
-fit_RM_nonSWS <- lmer(MedinScores ~ Condition + (1|Code), data=nonSWS_repeated)
+fit_RM_nonSWS <- lmer(MedianScores ~ Condition + (1|Code), data=nonSWS_repeated)
 anova(fit_RM_nonSWS)
 print(analyze(fit_RM_nonSWS))
 
@@ -530,7 +530,7 @@ ggplot(results_RM_nonSWS$means, aes(x=Condition, y=Mean, group=1)) +
   xlab(" Condition") +
   theme_bw()
 ##
-fit_RM_SWS <- lmer(MedinScores ~ Condition + (1|Code), data=SWS_repeated_measures)
+fit_RM_SWS <- lmer(MedianScores ~ Condition + (1|Code), data=SWS_repeated_measures)
 anova(fit_RM_SWS)
 print(analyze(fit_RM_SWS))
 
@@ -546,7 +546,7 @@ ggplot(results_RM_SWS$means, aes(x=Condition, y=Mean, group=1)) +
   theme_bw()
 #now, running them in Bayesian
 #for nonSWS
-fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedinScores ~ Condition + (1|Code), data=nonSWS_repeated)
+fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedianScores ~ Condition + (1|Code), data=nonSWS_repeated)
 results <- psycho::analyze(fit_Bayes_RM_nonSWS)
 summary(results, round = 2)
 print(results)
@@ -556,7 +556,7 @@ print(results)
 # checking for the main effects of gender or handedness:
 #Gender
 #Gender for nonSWS
-fit_RM_nonSWS_Sex <- lmer(MedinScores ~ Condition * Gender + (1|Code), data=nonSWS_repeated)
+fit_RM_nonSWS_Sex <- lmer(MedianScores ~ Condition * Gender + (1|Code), data=nonSWS_repeated)
 anova(fit_RM_nonSWS_Sex)
 print(analyze(fit_RM_nonSWS_Sex))
 
@@ -571,7 +571,7 @@ ggplot(results_Sex$means, aes(x=Condition, y=Mean, color=Gender, group=Gender)) 
   xlab("Condition") +
   theme_bw()
 #Gender for SWS
-fit_RM_SWS_Sex <- lmer(MedinScores ~ Condition * Gender + (1|Code), data=SWS_repeated_measures)
+fit_RM_SWS_Sex <- lmer(MedianScores ~ Condition * Gender + (1|Code), data=SWS_repeated_measures)
 anova(fit_RM_SWS_Sex)
 print(analyze(fit_RM_SWS_Sex))
 
@@ -588,7 +588,7 @@ ggplot(results_Sex$means, aes(x=Condition, y=Mean, color=Gender, group=Gender)) 
 ####
 #Handedness
 #Handedness for nonSWS
-fit_RM_nonSWS_Hand <- lmer(MedinScores ~ Condition * Handedness + (1|Code), data=nonSWS_repeated)
+fit_RM_nonSWS_Hand <- lmer(MedianScores ~ Condition * Handedness + (1|Code), data=nonSWS_repeated)
 anova(fit_RM_nonSWS_Hand)
 print(analyze(fit_RM_nonSWS_Hand))
 
@@ -603,7 +603,7 @@ ggplot(results_Hand$means, aes(x=Condition, y=Mean, color=Handedness, group=Hand
   xlab("Condition") +
   theme_bw()
 #Handedness for SWS
-fit_RM_SWS_Hand <- lmer(MedinScores ~ Condition * Handedness + (1|Code), data=SWS_repeated_measures)
+fit_RM_SWS_Hand <- lmer(MedianScores ~ Condition * Handedness + (1|Code), data=SWS_repeated_measures)
 anova(fit_RM_SWS_Hand)
 print(analyze(fit_RM_SWS_Hand))
 

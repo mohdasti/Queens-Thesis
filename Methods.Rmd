@@ -27,7 +27,10 @@ header-includes:
 - \counterwithin{table}{section}
 ---
 ```{r setup, include=FALSE}
-RAW_Dec_2018 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/bff30a97de4611da7172295f0b25c090770e41ab/Oct%202018.xlsx?raw=true', na="N/A")
+library(rio)
+RAW_Jan_2019 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Jan_2019.xlsx?raw=true', na="N/A")
+RAW <- RAW_Jan_2019  #should be changed everytime I update the main excel file
+RAW<- RAW[-c(7,25,30),]
 ```
 
 # Methods
@@ -46,7 +49,7 @@ knitr::include_graphics('Figures/timeline.pdf')
 ```
 
 ## Participants
-Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Dec_2018)` completed the study. However, <!-- add Asvini's work into that and check for those who f-ed the experiment --> failed to meet the experiment critrtia (e.g. participants who dozed off during the meditation session), leaving us with <!-- final number --> of participants.
+Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Jan_2019)` completed the study. However, <!-- add Asvini's work into that and check for those who f-ed the experiment --> failed to meet the experiment critrtia (e.g. participants who dozed off during the meditation session), leaving us with <!-- final number --> of participants.
 
 
 ## Materials
@@ -109,5 +112,7 @@ The amount and duration of the following parameters were computed: number of aro
 ### Measures of meditation
 For meditators, spectral analysis using fast Fourier transform was applied to assess the mean power spectral density in the frequency bands of interest (0.5-50 Hz). <!-- this section needs to be completed with the data gathered from R -->
 
+## Data analysis
+Statistical analyses (analysis of variance [ANOVA] and Bayesian framework analysis and other correlational studies and electrophysiological measures) were carried out using the R software package (Version 1.1.463; R Core Team).
 # References
 
