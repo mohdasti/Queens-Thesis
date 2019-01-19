@@ -3,12 +3,12 @@ title: "Methods"
 author: "Mohammad Dastgheib"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
+  word_document: default
   pdf_document:
     fig_caption: yes
     number_sections: yes
     includes:
       in_header: preamble-latex.tex
-  word_document: default
 indent: true
 urlcolor: black
 linkcolor: black
