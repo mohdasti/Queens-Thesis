@@ -3,12 +3,13 @@ title: "Methods"
 author: "Mohammad Dastgheib"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
-  word_document: default
   pdf_document:
     fig_caption: yes
     number_sections: yes
     includes:
       in_header: preamble-latex.tex
+  word_document: 
+    fig_caption: yes
 indent: true
 urlcolor: black
 linkcolor: black
@@ -38,7 +39,7 @@ RAW<- RAW[-c(7,25,30),]
 # Methods
 ## Study Design 
 
-This study followed of a pilot experimet, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment. All of the raw data of this study can be accessed at [GitHub repository of this study](https://github.com/mohdasti/Queens-Thesis/tree/master/Raw%20data).
+This study followed of a pilot experiment, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment. All of the raw data of this study can be accessed at [GitHub repository of this study](https://github.com/mohdasti/Queens-Thesis/tree/master/Raw%20data).
 \par
 The design of current study was comprised of two main parts: The *Initial interview* and the *Experiment*. It was beneficial for participants to familiarize themselves with the study and testing environment before commencing the main experiment. Thus, during the initial interview, the researcher showed the facility to participants, and asked them to sign the Letter of Information and Consent, the Participant Information Survey and the "Freiburg Mindfulness Inventory" (FMI) [@walach2006measuring] (See Appendix C, D, E). Based on the participant’s responses and history of activities, the researcher assigned him/her to one of the three experimental conditions (random assignment for napping/wake conditions). \par
 
@@ -51,7 +52,7 @@ knitr::include_graphics('Figures/timeline.pdf')
 ```
 
 ## Participants
-Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Jan_2019)` completed the study (mean age = `r round(mean(RAW_Jan_2019$Age, digits=2))` $\pm$ `r trunc(sd(RAW_Jan_2019$Age))` years old, `r length(which(RAW_Jan_2019$Gender == "F"))` female). However, 3 individuals failed to meet the experiment critrtia (e.g. participants who dozed off during the meditation session), leaving us with `r nrow(RAW_Jan_2019) -3` of participants.
+Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Jan_2019)` completed the study (mean age = `r round(mean(RAW_Jan_2019$Age, digits=2))` $\pm$ `r trunc(sd(RAW_Jan_2019$Age))` years old, `r length(which(RAW_Jan_2019$Gender == "F"))` female). However, 3 individuals failed to meet the experiment criteria (e.g. participants who dozed off during the meditation session), leaving us with `r nrow(RAW_Jan_2019) -3` of participants.
 
 
 ## Materials
@@ -162,7 +163,7 @@ TNR = \frac{TN}{TN + FP}
  Median is a robust measure of central tendency and is less affected by outliers and skewed data than the mean, and is usually the preferred measure when the distribution is not symmetrical. Therefore, I decided to calculate the median of the last ten trials of the training session (trials 91-100), and compare that to the median of the first ten trials of the test session (trials 1-10). 
 
 ## Data analysis
-Statistical analyses (Null-hypothesis significant testing, Bayesian inferences analysis, and electrophysiological measures) were carried out using the R software package (Version 1.1.463; R Core Team). Calculation of the sleep parameters relied on Microsof Excel for Mac (Version 16.19; Microsoft).
+Statistical analyses (Null-hypothesis significant testing, Bayesian inferences analysis, and electrophysiological measures) were carried out using the R software package (Version 1.1.463; R Core Team). Calculation of the sleep parameters relied on Microsoft Excel for Mac (Version 16.19; Microsoft).
 
 ### Assumptions
 For each \textsc{anova}, I checked the following:
@@ -173,14 +174,14 @@ For each \textsc{anova}, I checked the following:
 
 ### Declarative memory
 By fitting linear models, I carried out series of one-way between-subjects' \textsc{anova} for the comparison of the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in paired-associate task using G-Mean. The significance threshold was determined using Holm correction with $\alpha$ set to .05.  
-Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict G-Mean `(formula = GMean ~ Condition)`.
+Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo Gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict G-Mean `(formula = GMean ~ Condition)`.
 
 Additionally, I ran several exploratory logistic regressions on the role of gender and handedness, and moderated regression to explore the relationship between the degree of mindfulness and G-Mean values.
 To assess the effect of \textsc{sws}, I divided the napping condition into two groups (\textsc{sws} and no-\textsc{sws}) and analyses were carried out separately.
 
 ### Non-declarative memory
-Primiarily, by fitting linear mixed-effcts models, I carried out series of repeated-measures' \textsc{anova} to compare the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in Marble Maze task using median values.
-Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict Median Scores `(formula = MedinScores ~ Condition + (1 | Code))`.
+Primarily, by fitting linear mixed-effects models, I carried out series of repeated-measures' \textsc{anova} to compare the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in Marble Maze task using median values.
+Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo Gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict Median Scores `(formula = MedinScores ~ Condition + (1 | Code))`.
 
 Additionally, I ran several exploratory logistic regressions on the role of gender and handedness, and moderated regression to explore the relationship between the degree of mindfulness and the differences of median values.
 To assess the effect of \textsc{sws}, I divided the napping condition into two groups (\textsc{sws} and no-\textsc{sws}) and analyses were carried out separately.
