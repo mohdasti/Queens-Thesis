@@ -291,7 +291,7 @@ ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
   xlab("Condition")
 -----------
   #for nappers - comparing the GMean for sws and non-sws
-  RAW_for_NAP <- RAW[1:19,]
+  RAW_for_NAP <- RAW[1:24,]
 fit_GMean_NAP <- rstanarm::stan_glm(GMean ~ swstype , data=RAW_for_NAP)
 results <- psycho::analyze(fit_GMean_NAP)
 print(results)
@@ -306,7 +306,7 @@ ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
   xlab("swstype")
 -------------
   #for nappers - comparing the median of differences in maze task for sws and non-sws
-  RAW_for_NAP <- RAW[1:19,]
+  RAW_for_NAP <- RAW[1:24,]
 fit_Maze_NAP <- rstanarm::stan_glm(Median.Diff ~ swstype , data=RAW_for_NAP)
 results <- psycho::analyze(fit_Maze_NAP)
 print(results)
