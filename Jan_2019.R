@@ -11,14 +11,14 @@ ipak <- function(pkg){
 }
 
 # usage
-packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr")
+packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr","Hmisc","psycho","lmerTest")
 ipak(packages)
 library(rio)
 # importing the main excel file from Githul repository 
 RAW_Jan_2019 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Jan_2019.xlsx?raw=true', na="N/A")
 View(RAW_Jan_2019)
 RAW <- RAW_Jan_2019  #should be changed everytime I update the main excel file
-RAW<- RAW[-c(7,25,30),] #Removing outlier participants - LN7: too many arousals - MM4&MM5: they slept through meditation session
+RAW<- RAW[-c(7,34,39),] #Removing outlier participants - LN7: too many arousals - MM4&MM5: they slept through meditation session
 #Subsetting the dataset based on the condition
 NAP <- RAW[which(RAW$Condition == 'NAP'), ]
 MED <- RAW[which(RAW$Condition == 'MED'), ]
@@ -95,9 +95,9 @@ boxplot(GMean ~ Condition, data = RAW, main = "Geometric mean for word-pair asso
 qqnorm(RAW$GMean)
 qqline(RAW$GMean) # there was not 'significant' departures from the line
 shapiro.test(RAW$GMean)  #not significant, meaning that no violation of normality
-GMean_contrastcoding_aov <-
-  lm((RAW$GMean) ~ cNAPMEDvsWAKE + cNAPvsMED, RAW)
-Anova(GMean_contrastcoding_aov, type = 3) ##SIGNIFICANT!
+#GMean_contrastcoding_aov <- lm((RAW$GMean) ~ cNAPMEDvsWAKE + cNAPvsMED, RAW)
+# decided to use psycho package to interpret the linear mixed model
+#Anova(GMean_contrastcoding_aov, type = 3) #unnecessary
 # Calculating the Effect Size
 library(lsr)
 etaSquared(GMean_contrastcoding_aov, type = 3)
@@ -106,6 +106,9 @@ pairwise.t.test(RAW$GMean, RAW$Condition, p.adjust.method = "holm")
 ##how to write interaction plot? -- wait for the rest of Asvini's data, then run a full analysis
 ##for quantitative explanatory variables, which test is used to check for the homogeneity of variance??
 # Running factorial ANOVA for GMean across all conditions ----
+# I found lmerTest function
+GMean_lm<- lmer(GMean ~ Condition + (1 | Code), data = RAW,control=lmerControl(check.nobs.vs.nlev = "ignore",check.nobs.vs.rankZ = "ignore",check.nobs.vs.nRE="ignore"))
+analyze(GMean_lm, CI=95)
 #Running factorial ANOVA for GMean across all conditions
 #Checking for assumptions
 #outliers - ** so far, there is none - will keep that in case something showed up **
@@ -281,10 +284,9 @@ fit_GMean <- rstanarm::stan_glm(GMean ~ Condition, data=RAW)
 results <- psycho::analyze(fit_GMean)
 print(results)
 contrasts <- psycho::get_contrasts(fit_GMean, "Condition")
-contrasts$means
-contrasts$contrasts
+means <- psycho::get_means(fit_GMean, "Condition")
 
-ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
+ggplot(means, aes(x=Level, y=Median, group=1)) +
   geom_line() +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("GMean") +
@@ -296,10 +298,9 @@ fit_GMean_NAP <- rstanarm::stan_glm(GMean ~ swstype , data=RAW_for_NAP)
 results <- psycho::analyze(fit_GMean_NAP)
 print(results)
 contrasts <- psycho::get_contrasts(fit_GMean_NAP, "swstype")
-contrasts$means
-contrasts$contrasts
+means <- psycho::get_means(fit_GMean_NAP, "swstype")
 
-ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
+ggplot(means, aes(x=Level, y=Median, group=1)) +
   geom_line() +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("GMean") +
@@ -311,10 +312,10 @@ fit_Maze_NAP <- rstanarm::stan_glm(Median.Diff ~ swstype , data=RAW_for_NAP)
 results <- psycho::analyze(fit_Maze_NAP)
 print(results)
 contrasts <- psycho::get_contrasts(fit_Maze_NAP, "swstype")
-contrasts$means
-contrasts$contrasts
+means <- psycho::get_means(fit_Maze_NAP, "swstype")
 
-ggplot(contrasts$means, aes(x=Level, y=Median, group=1)) +
+
+ggplot(means, aes(x=Level, y=Median, group=1)) +
   geom_line() +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("Median.Diff") +
