@@ -520,10 +520,12 @@ anova(fit_RM_nonSWS)
 print(analyze(fit_RM_nonSWS))
 
 results_RM_nonSWS <- get_contrasts(fit_RM_nonSWS, "Condition")
-print(results_RM_nonSWS$contrasts)
-results_RM_nonSWS$means
+contrasts_RM_nonSWS <- psycho::get_contrasts(fit_RM_nonSWS, "Condition")
+means_RM_nonSWS <- psycho::get_means(fit_RM_nonSWS, "Condition")
+print(contrasts_RM_nonSWS)
+print(means_RM_nonSWS)
 
-ggplot(results_RM_nonSWS$means, aes(x=Condition, y=Mean, group=1)) +
+ggplot(means_RM_nonSWS, aes(x=Condition, y=Mean, group=1)) +
   geom_line() +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("Median of Scores - nonSWS") +
@@ -535,10 +537,12 @@ anova(fit_RM_SWS)
 print(analyze(fit_RM_SWS))
 
 results_RM_SWS <- psycho::get_contrasts(fit_RM_SWS, "Condition")
-print(results_RM_SWS$contrasts)
-results_RM_SWS$means
+means_RM_SWS <- psycho::get_means(fit_RM_SWS, "Condition")
+contrasts_RM_SWS <- psycho::get_contrasts(fit_RM_SWS, "Condition")
+print(contrasts_RM_SWS)
+print(means_RM_SWS)
 
-ggplot(results_RM_SWS$means, aes(x=Condition, y=Mean, group=1)) +
+ggplot(means_RM_SWS, aes(x=Condition, y=Mean, group=1)) +
   geom_line() +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("Median of Scores - SWS") +
@@ -734,7 +738,7 @@ ppd %>%
 ##IMPORTANT: remove those meditators who slept. MM5 and MM4 probably
 #Meditation matlab
 library(R.matlab)
-data <- readMat("/Users/mohdasti/Downloads/MM2\ copy.mat")
+data <- readMat("/Users/mohdasti/Downloads/MM2.mat")
 View(data$data[data$datastart[1]:data$dataend[1]])
 View(data$data[data$com[data$comtext == "start     ",3]:data$dataend[length(data$dataend)]])
 install.packages("eegkit")
