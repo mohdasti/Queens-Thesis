@@ -15,21 +15,23 @@ packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot
 ipak(packages)
 library(rio)
 # importing the main excel file from Githul repository 
-RAW_Jan_2019 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Jan_2019.xlsx?raw=true', na="N/A")
+RAW_Jan_2019 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/RAW_data.xlsx?raw=true', na="N/A")
 View(RAW_Jan_2019)
 RAW <- RAW_Jan_2019  #should be changed everytime I update the main excel file
-RAW<- RAW[-c(7,34,39),] #Removing outlier participants - LN7: too many arousals - MM4&MM5: they slept through meditation session
+RAW<- RAW[-c(7,34,39,44),] #Removing outlier participants - LN7: too many arousals - MM4&MM5: they slept through meditation session - AM3: Hans advised me to remove it
 #Subsetting the dataset based on the condition
 NAP <- RAW[which(RAW$Condition == 'NAP'), ]
 MED <- RAW[which(RAW$Condition == 'MED'), ]
 WAKE <- RAW[which(RAW$Condition == 'WAKE'), ]
-# Adding several columns for dummy codings and contrast codings for further use
-# Dummy variables for 'gender' and 'handedness' ----
+
+# Dummy codings/contrast codings ----
+#Dummy variables for 'gender' and 'handedness' 
 RAW$binary_gender <-
   ifelse(RAW$Gender == 'M', 1, 0) #create dummy variable for gender
 RAW$binary_handedness <-
   ifelse(RAW$Gender == 'R', 1, 0) #create dummy variable for handedness
-# Contrast coding based on the conditions and apriori hyp. ----
+
+# Contrast coding based on the conditions and apriori hyp
 RAW$NAPMEDvsWAKE <-
   ifelse(RAW$Condition == "MED",.33,
          ifelse(RAW$Condition == "NAP", .33,-.67))
@@ -38,8 +40,8 @@ RAW$NAPvsMED <-
 #centering those values to avoid problems of multicollinearity
 RAW$cNAPMEDvsWAKE <- scale(RAW$NAPMEDvsWAKE, center = TRUE, scale = FALSE)[,]
 RAW$cNAPvsMED <- scale(RAW$NAPvsMED, center = TRUE, scale = FALSE)[,]
-## DECLARATIVE MEMORY task ##
-# Calculating True Postive Rate, True Negative Rate, BA, and Geometric Mean----
+## DECLARATIVE MEMORY task ##----
+# Calculating True Postive Rate, True Negative Rate, BA, and Geometric Mean
 RAW$TPR <-
   RAW$`Hit ratio` / (RAW$`Hit ratio` + RAW$`False Alarm ratio`)
 RAW$TNR <-
@@ -90,7 +92,7 @@ ggplot(df, aes(x = Condition, y = GeometricMean, color = Condition)) +
 #it's good to calculate BA (balanced accuracy) as well, and compare it to G-Mean for my own reference.
 #No noticeable difference between BA and GMean was observed.
 #look for those who napped and went SWS and look for covariates of sleep duration
-# comparing Geometric mean with contrast-coding and ANOVA ----
+# comparing Geometric mean with contrast-coding and ANOVA 
 boxplot(GMean ~ Condition, data = RAW, main = "Geometric mean for word-pair associates across treatment conditions") #no outlier, but huge variation for nap condition. could be caused by sleep inertia.
 qqnorm(RAW$GMean)
 qqline(RAW$GMean) # there was not 'significant' departures from the line
@@ -107,8 +109,7 @@ pairwise.t.test(RAW$GMean, RAW$Condition, p.adjust.method = "holm")
 ##for quantitative explanatory variables, which test is used to check for the homogeneity of variance??
 # Running factorial ANOVA for GMean across all conditions ----
 # I found lmerTest function
-GMean_lm<- lmer(GMean ~ Condition + (1 | Code), data = RAW,control=lmerControl(check.nobs.vs.nlev = "ignore",check.nobs.vs.rankZ = "ignore",check.nobs.vs.nRE="ignore"))
-analyze(GMean_lm, CI=95)
+GMean_lm<- lm(GMean ~ 1 + as.factor(Condition), data = RAW)
 #Running factorial ANOVA for GMean across all conditions
 #Checking for assumptions
 #outliers - ** so far, there is none - will keep that in case something showed up **
@@ -272,7 +273,7 @@ ggplot(df2.median, aes(x = total.sleep.time, y=Median.Diff, label = percentSWS )
 ggplot(df2.median, aes(x = total.sleep.time, y=Median.Diff, label = percentSWS )) + geom_hline(yintercept=0, linetype="dashed", color = "red") + geom_text(aes(colour = percentSWS), size = 5) + geom_smooth(method = lm) #PercentSWSnoCode - looking at the overall regression line, without the separation of SWS and non-SWS
 ggplot(df2.median, aes(x = total.sleep.time, y=Median.Diff, colour = swstype )) + geom_point(aes(size = percentSWS)) + geom_hline(yintercept=0, linetype="dashed", color = "blue") + geom_smooth(method = lm, se= FALSE) #+ theme_apa() #PercentSWSgraph with regression lines}}
 
-# Calculating ANOVA with Bayesian Framework ----
+# Calculating with Bayesian Framework ----
 # Across all conditions - comparing the GMean 
 RAW$TPR <-
   RAW$`Hit ratio` / (RAW$`Hit ratio` + RAW$`False Alarm ratio`)
@@ -320,20 +321,283 @@ ggplot(means, aes(x=Level, y=Median, group=1)) +
   geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
   ylab("Median.Diff") +
   xlab("swstype")  
+
+# Calculating repeated-measures ANOVA based on swstype ----
+# for Motor-task:
+#make sure to check for those outliers that I have selected above. These excel files may still contain those.
+library(readxl)
+
+nonSWS_repeated <- rio::import("https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Repeated%20measures/nonSWS_repeated.xlsx?raw=true",na = "N/A")
+View(nonSWS_repeated)
+
+SWS_repeated_measures <- rio::import("https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Repeated%20measures/SWS_repeated.xlsx?raw=true", 
+                                     na = "N/A")
+View(SWS_repeated_measures)
+# repeated measures ANOVA for nonSWS nappers and other conditions for maze task
+library(psycho)
+library(rstanarm)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(lme4)
+library(Matrix)
+library(lmerTest)
+
+## note that these ARE NOT bayesian inferences
+
+fit_RM_nonSWS <- lmer(MedinScores ~ Condition + (1|Code), data=nonSWS_repeated)
+anova(fit_RM_nonSWS)
+print(analyze(fit_RM_nonSWS))
+
+results_RM_nonSWS <- get_contrasts(fit_RM_nonSWS, "Condition")
+contrasts_RM_nonSWS <- psycho::get_contrasts(fit_RM_nonSWS, "Condition")
+means_RM_nonSWS <- psycho::get_means(fit_RM_nonSWS, "Condition")
+print(contrasts_RM_nonSWS)
+print(means_RM_nonSWS)
+
+ggplot(means_RM_nonSWS, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("Median of Scores - nonSWS") +
+  xlab(" Condition") +
+  theme_bw()
+##
+fit_RM_SWS <- lmer(MedinScores ~ Condition + (1|Code), data=SWS_repeated_measures)
+anova(fit_RM_SWS)
+print(analyze(fit_RM_SWS))
+
+results_RM_SWS <- psycho::get_contrasts(fit_RM_SWS, "Condition")
+means_RM_SWS <- psycho::get_means(fit_RM_SWS, "Condition")
+contrasts_RM_SWS <- psycho::get_contrasts(fit_RM_SWS, "Condition")
+print(contrasts_RM_SWS)
+print(means_RM_SWS)
+
+ggplot(means_RM_SWS, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("Median of Scores - SWS") +
+  xlab(" Condition") +
+  theme_bw()
+
+#now, running them in Bayesian
+#for nonSWS
+fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedinScores ~ Condition + (1|Code), data=nonSWS_repeated)
+
+fit.mean <- as.matrix(fit_Bayes_RM_nonSWS)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+ggplot(fit.pf, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_errorbar(aes(ymin = Lower, ymax = Upper), width = 0) +
+  ylab("Median of Scores - SWS") +
+  xlab(" Condition") +
+  theme_bw()
+
+
+results <- psycho::analyze(fit_Bayes_RM_nonSWS)
+summary(results, round = 2)
+print(results)
+
+#now, running additional factors.
+# checking for the main effects of gender or handedness:
+#Gender
+#Gender for nonSWS
+fit_RM_nonSWS_Sex <- lmer(MedinScores ~ Condition * Gender + (1|Code), data=nonSWS_repeated)
+anova(fit_RM_nonSWS_Sex)
+print(analyze(fit_RM_nonSWS_Sex))
+
+results_Sex <- get_contrasts(fit_RM_nonSWS_Sex, "Condition * Gender")
+print(results_Sex$means)
+
+ggplot(results_Sex$means, aes(x=Condition, y=Mean, color=Gender, group=Gender)) +
+  geom_line(position = position_dodge(.3)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher), 
+                  position = position_dodge(.3)) +
+  ylab("Median of Scores - nonSWS") +
+  xlab("Condition") +
+  theme_bw()
+#Gender for SWS
+fit_RM_SWS_Sex <- lmer(MedinScores ~ Condition * Gender + (1|Code), data=SWS_repeated_measures)
+anova(fit_RM_SWS_Sex)
+print(analyze(fit_RM_SWS_Sex))
+
+results_Sex <- get_contrasts(fit_RM_SWS_Sex, "Condition * Gender")
+print(results_Sex$means)
+
+ggplot(results_Sex$means, aes(x=Condition, y=Mean, color=Gender, group=Gender)) +
+  geom_line(position = position_dodge(.3)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher), 
+                  position = position_dodge(.3)) +
+  ylab("Median of Scores - nonSWS") +
+  xlab("Condition") +
+  theme_bw()
+####
+#Handedness
+#Handedness for nonSWS
+fit_RM_nonSWS_Hand <- lmer(MedinScores ~ Condition * Handedness + (1|Code), data=nonSWS_repeated)
+anova(fit_RM_nonSWS_Hand)
+print(analyze(fit_RM_nonSWS_Hand))
+
+results_Hand <- get_contrasts(fit_RM_nonSWS_Hand, "Condition * Handedness")
+print(results_Hand$means)
+
+ggplot(results_Hand$means, aes(x=Condition, y=Mean, color=Handedness, group=Handedness)) +
+  geom_line(position = position_dodge(.3)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher), 
+                  position = position_dodge(.3)) +
+  ylab("Median of Scores - nonSWS") +
+  xlab("Condition") +
+  theme_bw()
+#Handedness for SWS
+fit_RM_SWS_Hand <- lmer(MedinScores ~ Condition * Handedness + (1|Code), data=SWS_repeated_measures)
+anova(fit_RM_SWS_Hand)
+print(analyze(fit_RM_SWS_Hand))
+
+results_Hand <- get_contrasts(fit_RM_SWS_Hand, "Condition * Handedness")
+print(results_Hand$means)
+
+ggplot(results_Hand$means, aes(x=Condition, y=Mean, color=Handedness, group=Handedness)) +
+  geom_line(position = position_dodge(.3)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher), 
+                  position = position_dodge(.3)) +
+  ylab("Median of Scores - nonSWS") +
+  xlab("Condition") +
+  theme_bw()
+####
+# FMI or Age... I think it does not make sense to calculate those. 
+# even, I think there is no particular advantage in doing "Repeated-Measures ANOVA". They are significant, so I can 'Median.Diff'
+# Calculaitng logistic regressions of gender and Handedness ----
+RAW_noSWS_and_MED_WAKE$binary.gender <-
+  ifelse(RAW_noSWS_and_MED_WAKE$Gender == 'M', 1, 0) #create dummy variable for gender
+
+fit_LogReg_Sex <- rstanarm::stan_glm(binary.gender ~ Median.Diff, data= RAW_noSWS_and_MED_WAKE, family = "binomial")
+results_LogReg_Sex <- psycho::analyze(fit_LogReg_Sex)
+summary(results_LogReg_Sex, round = 2)
+
+refgrid <- RAW_noSWS_and_MED_WAKE %>% 
+  select(Median.Diff) %>% 
+  psycho::refdata(length.out=10)
+
+predicted <- psycho::get_predicted(fit_LogReg_Sex, newdata=refgrid)
+
+ggplot(predicted, aes(x=Median.Diff, y=binary.gender_Median)) +
+  geom_line() +
+  geom_ribbon(aes(ymin=binary.gender_CI_5, 
+                  ymax=binary.gender_CI_95), 
+              alpha=0.1) +
+  ylab("Probability of being a male")
+#running logistic regression for handedness
+RAW_noSWS_and_MED_WAKE$binary.handedness <-
+  ifelse(RAW_noSWS_and_MED_WAKE$Handedness == 'R', 1, 0) #create dummy variable for handedness
+
+fit_LogReg_Hand <- rstanarm::stan_glm(binary.handedness ~ Median.Diff, data= RAW_noSWS_and_MED_WAKE, family = "binomial")
+results_LogReg_Hand <- psycho::analyze(fit_LogReg_Hand)
+summary(results_LogReg_Hand, round = 2)
+
+refgrid <- RAW_noSWS_and_MED_WAKE %>% 
+  select(Median.Diff) %>% 
+  psycho::refdata(length.out=10)
+
+predicted <- psycho::get_predicted(fit_LogReg_Hand, newdata=refgrid)
+
+ggplot(predicted, aes(x=Median.Diff, y=binary.handedness_Median)) +
+  geom_line() +
+  geom_ribbon(aes(ymin=binary.handedness_CI_5, 
+                  ymax=binary.handedness_CI_95), 
+              alpha=0.1) +
+  ylab("Probability of being Right Handed")
+# checking the effect of gender of GMean - here, there is no need to look at non-SWS specifically
+RAW.without.LN7$binary.gender <-
+  ifelse(RAW.without.LN7$Gender == 'M', 1, 0) #create dummy variable for gender
+
+fit_LogReg_GMean_Sex <- rstanarm::stan_glm(binary.gender ~ GMean, data= RAW.without.LN7, family = "binomial")
+results_LogReg_GMean_Sex <- psycho::analyze(fit_LogReg_GMean_Sex)
+summary(results_LogReg_GMean_Sex, round = 2)
+
+refgrid <- RAW.without.LN7 %>% 
+  select(GMean) %>% 
+  psycho::refdata(length.out=10)
+
+predicted <- psycho::get_predicted(fit_LogReg_GMean_Sex, newdata=refgrid)
+
+ggplot(predicted, aes(x=GMean, y=binary.gender_Median)) +
+  geom_line() +
+  geom_ribbon(aes(ymin=binary.gender_CI_5, 
+                  ymax=binary.gender_CI_95), 
+              alpha=0.1) +
+  ylab("Probability of being a male") # it was interesting!
+# Calculating the Moderated Regression ----
+# FMI
+# for Motor-task:
+other.than.NAP <- filter(RAW.without.LN7, Condition != 'NAP' )
+RAW_noSWS_and_MED_WAKE <- rbind(NAP.performance.nosws,other.than.NAP)
+
+fit_MODREG_FMI <- lm(Median.Diff ~ Condition + FMI + Condition*FMI, data = RAW_noSWS_and_MED_WAKE)
+summary(fit_MODREG_FMI)
+library(QuantPsyc)
+sim.slopes(fit_MODREG_FMI, RAW_noSWS_and_MED_WAKE$FMI)
+# calculating the linear regression of sws percentage and median difference ----
+fit_Maze_linear_reg <- rstanarm::stan_glm(Median.Diff ~ percentSWS, data = NAP.performance.sws)
+results <- psycho::analyze(fit_Maze_linear_reg)
+summary(results, round = 2)
+print(results)
+refgrid <- NAP.performance.sws %>% 
+  select(percentSWS) %>% 
+  psycho::refdata(length.out=10)
+
+predicted <- psycho::get_predicted(fit_Maze_linear_reg, newdata=refgrid)
+
+ggplot(predicted, aes(x=percentSWS, y=Median.Diff_Median)) +
+  geom_line() + 
+  geom_ribbon(aes(ymin=Median.Diff_CI_5, 
+                  ymax=Median.Diff_CI_95), 
+              alpha=0.1)
+#plotting the posterior distribution for percent SWS
+posterior <- as.matrix(fit_Maze_linear_reg)
+plot_title <- ggtitle("Posterior distributions", "median and 80% intervals")
+mcmc_areas(posterior, pars = c("percentSWS"),prob = .8)+plot_title
+# Diagnosing convergence with traceplot
+mcmc_trace(posterior,pars = c("percentSWS"))
+#pairs plot for determining if we have any highly correlated parameters.
+posterior_chains <- as.array(fit_Maze_linear_reg)
+pairs <- posterior_chains %>%
+  mcmc_pairs(pars = c("(Intercept)","percentSWS"))
+#posterior predictive density
+library("rstanarm")
+ppd <- posterior_predict(fit_Maze_linear_reg, draws= 500)
+ppd %>% ppc_dens_overlay(y= fit_Maze_linear_reg$y, yrep = .)
+#-
+ppd %>%
+  ppc_stat_grouped(y=NAP.performance.sws$percentSWS, group = NAP.performance.sws$Median.Diff,
+                   stat = "median", binwidth = .5)
+
+#misc. ----
+# to cite any package
+#citation(package = "dplyr") 
+#just change the name of the package in the ""
+
 # Sleepiness----------
 # A new column for difference in pre-post Epworth scale for further use
 RAW$ESS_diff <- (RAW$ESS_Post - RAW$ESS_Pre)
 #filtering napper based on their sleep profile into a separate dataframe for further use
 SWS_nappers <- filter(RAW, percentSWS != 0.0) #nappers who showed SWS
 #running repeated-measures t-test on ESS within-subject in different conditions
-MED_ESSpre <- c(MED$`ESS Pre`) 
-MED_ESSpost <- c(MED$`ESS Post`)
+MED_ESSpre <- c(MED$ESS_Pre) 
+MED_ESSpost <- c(MED$ESS_Post)
 t.test(MED_ESSpre, MED_ESSpost, paired = TRUE)
-NAP_ESSpre <- c(NAP$`ESS Pre`) 
-NAP_ESSpost <- c(NAP$`ESS Post`)
+NAP_ESSpre <- c(NAP$ESS_Pre) 
+NAP_ESSpost <- c(NAP$ESS_Post)
 t.test(NAP_ESSpre, NAP_ESSpost, paired = TRUE)
-WAKE_ESSpre <- c(WAKE$`ESS Pre`) 
-WAKE_ESSpost <- c(WAKE$`ESS Post`)
+WAKE_ESSpre <- c(WAKE$ESS_Pre) 
+WAKE_ESSpost <- c(WAKE$ESS_Post)
 t.test(WAKE_ESSpre, WAKE_ESSpost, paired = TRUE)
 #running ANOVA on ESS across all conditions
 boxplot(ESS_diff ~ Condition, data = RAW, main = "Epworth pre-post difference across treatment conditions") 
