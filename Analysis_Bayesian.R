@@ -6,7 +6,7 @@ required_packages <- function(pkg){
   sapply(pkg, require, character.only = TRUE)
 }
 
-packages <- c("rio","readxl", "tidyverse","devtools","car","lsr","dplyr","ggplot2","magrittr","Hmisc","psycho","lmerTest","rstanarm","jtools","bayesplot")
+packages <- c("rio","readxl", "tidyverse","devtools","dplyr","ggplot2","magrittr","Hmisc","psycho","lmerTest","rstanarm","jtools","bayesplot")
 required_packages(packages)
 
 # importing the main excel file from Github repository (mohdasti)
@@ -87,11 +87,24 @@ ggplot(df_GMean, aes(x = Condition, y = GeometricMean, color = Condition)) +
 
 #Compare across all treatment conditions
 fit_GMean <- rstanarm::stan_glm(GMean ~ Condition, data=RAW_declr)
+fit.mean <- as.matrix(fit_GMean)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
 results <- psycho::analyze(fit_GMean)
+summary(results, round = 2)
 print(results)
+
 contrasts <- psycho::get_contrasts(fit_GMean, "Condition")
 means <- psycho::get_means(fit_GMean, "Condition")
-
 #plotting the bayesian comparison
 ggplot(means, aes(x=Level, y=Median, group=1)) +
   geom_line() +
@@ -107,14 +120,29 @@ dimnames(posterior_GMean)
 color_scheme_set("red")
 mcmc_intervals(posterior_GMean, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma"))
 
+
 #for nappers - comparing the GMean for sws and non-sws
 RAW_declr$SWS[RAW_declr$percentSWS == 0] <- "Present"
 RAW_declr$SWS[RAW_declr$percentSWS != 0] <- "Absent"
 
 RAW_NAP <- RAW_declr[1:24,]
 fit_GMean_NAP <- rstanarm::stan_glm(GMean ~ SWS , data=RAW_NAP)
+fit.mean <- as.matrix(fit_GMean_NAP)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
 results <- psycho::analyze(fit_GMean_NAP)
+summary(results, round = 2)
 print(results)
+
 contrasts <- psycho::get_contrasts(fit_GMean_NAP, "SWS")
 means <- psycho::get_means(fit_GMean_NAP, "SWS")
 
@@ -166,7 +194,7 @@ ggplot(RAW_nondeclr,
 #Compare across all treatment conditions
 
 #with nonSWS nappers
-fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedinScores ~ Condition + (1|Code), data=nonSWS_repeated)
+fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedianScores ~ Condition + (1|Code), data=nonSWS_repeated)
 
 fit.mean <- as.matrix(fit_Bayes_RM_nonSWS)[,1:3]
 fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
@@ -200,7 +228,7 @@ mcmc_intervals(posterior_Maze_nonSWS, pars = c("(Intercept)", "ConditionNAP", "C
 
 
 ## with SWS
-fit_Bayes_RM_SWS <- rstanarm::stan_lmer(MedinScores ~ Condition + (1|Code), data=SWS_repeated)
+fit_Bayes_RM_SWS <- rstanarm::stan_lmer(MedianScores ~ Condition + (1|Code), data=SWS_repeated)
 
 fit.mean <- as.matrix(fit_Bayes_RM_SWS)[,1:3]
 fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
@@ -274,7 +302,7 @@ ggplot(predicted_GMean, aes(x=GMean)) +
 ## role of gender on the NON-DECLARATIVE memory
 # modeling the effect of gender
 #non SWS
-fit_Bayes_RM_nonSWS_gender <- rstanarm::stan_lmer(scale(MedinScores) ~ Condition * Gender + (1|Code), data=nonSWS_repeated, cores = 4, prior = normal(0,.5))
+fit_Bayes_RM_nonSWS_gender <- rstanarm::stan_lmer(scale(MedianScores) ~ Condition * Gender + (1|Code), data=nonSWS_repeated, cores = 4, prior = normal(0,.5))
 fit.mean <- as.matrix(fit_Bayes_RM_nonSWS_gender)[,1:3]
 fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
 fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
@@ -307,7 +335,7 @@ plot_title_Maze_nonSWS_gender <- ggtitle("Central posterior uncertainty interval
 mcmc_intervals(posterior_Maze_nonSWS_gender, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma")) + plot_title_Maze_nonSWS_gender
 
 #SWS
-fit_Bayes_RM_SWS_gender <- rstanarm::stan_lmer(MedinScores ~ Condition * Gender + (1|Code), data=SWS_repeated, cores = 4, prior = normal(0,.5))
+fit_Bayes_RM_SWS_gender <- rstanarm::stan_lmer(MedianScores ~ Condition * Gender + (1|Code), data=SWS_repeated, cores = 4, prior = normal(0,.5))
 fit.mean <- as.matrix(fit_Bayes_RM_SWS_gender)[,1:3]
 fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
 fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
