@@ -1,5 +1,5 @@
 ---
-title: "Methods"
+title: "Materials and Methods"
 author: "Mohammad Dastgheib"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
@@ -31,61 +31,86 @@ header-includes:
 ---
 ```{r setup, include=FALSE}
 library(rio)
-RAW_Jan_2019 <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Jan_2019.xlsx?raw=true', na="N/A")
-RAW <- RAW_Jan_2019  #should be changed everytime I update the main excel file
-RAW<- RAW[-c(7,25,30),]
+RAW_data <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/RAW_data.xlsx?raw=true', na="N/A")
+RAW <- RAW_data  #should be changed everytime I update the main excel file
+RAW_declr <- RAW[-c(34,39,25,13,46),]
+RAW_nondeclr <- RAW[-c(7,34,39,25,13,44,49,64),]
 ```
 
 # Methods
 ## Study Design 
 
-This study followed of a pilot experiment, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment. All of the raw data of this study can be accessed at [GitHub repository of this study](https://github.com/mohdasti/Queens-Thesis/tree/master/Raw%20data).
+<!--This study followed of a pilot experiment, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment. All of the raw data of this study can be accessed at [GitHub repository of this study](https://github.com/mohdasti/Queens-Thesis/tree/master/Raw%20data).--> <!-- THIS PART SHOULD BE MOVED TO RESULTS -->
 \par
-The design of current study was comprised of two main parts: The *Initial interview* and the *Experiment*. It was beneficial for participants to familiarize themselves with the study and testing environment before commencing the main experiment. Thus, during the initial interview, the researcher showed the facility to participants, and asked them to sign the Letter of Information and Consent, the Participant Information Survey and the "Freiburg Mindfulness Inventory" (FMI) [@walach2006measuring] (See Appendix C, D, E). Based on the participant’s responses and history of activities, the researcher assigned him/her to one of the three experimental conditions (random assignment for napping/wake conditions). \par
+The current study was comprised of two parts, typically carried out over two separate days: *Initial Interview* and the *Experiment*. This design was chosen to allow participants to familiarize themselves with the study and testing environment (particularly the room for napping and meditation) prior to the main experiment and data collection. \par
 
-With the exception of few wake condition experiments, all experimental procedures were conducted between 2:00 to 7:00 p.m. Participants arrived at the Sleep Laboratory, completed the “Epworth Sleepiness Scale” (ESS)[@johns1991new], then were assigned to start with the paired associates (word-pair) task to assess declarative memory, and the marble maze task to assess non-declarative memory (all post-treatment tasks are completed in a counterbalanced order). After completing the training tasks, then participants were prepared for the electroencephalography (EEG), electro-oculography (EOG), and electromyography (EMG) recordings and informed of their assigned condition (meditation, nap, wake). Following the completion of the electrode set-up and calibration procedure, participants spent 60 minutes in a quiet room. For the wake condition, participants watched the documentary movie “Planet Earth” [@Fothergill2007] on a computer screen. Participants in the meditation condition were asked to complete a self-guided meditation session, and for the nap condition, they were instructed to sleep in the bed. During this period, subjects’ brain activity was monitored with polysomnography. \par
-After the hour-long treatment, the researcher informed the participant that the hour is completed. After removing the electrodes, depending on their treatment condition, participants completed a self-report on the quality of their activity in the room, and a post-treatment \textsc{ess} questionnaire (See Appendix F, G, H, I). Subsequently, they were asked to complete 50 trials of the maze task and the word-pair recall test. At the end, participants were debriefed (see Appendix J) and given monetary compensation. The overall study design is illustrated in \autoref{timelinelabel}.
+*Interview*: During the initial interview, the researcher provided a brief summary of the study and associated methodology, and showed the facility to prospective participants. Subsequently, participants were asked to sign the Letter of Information and Consent, the Participant Information Survey, and to complete the "Freiburg Mindfulness Inventory" (FMI) [@walach2006measuring] (See Appendix C, D, E). Based on the participant’s responses and history of activities, the researcher assigned him/her to one of the three experimental conditions (random assignment for napping/wake conditions). \par
 
+*Experiment*: Typically, all experimental procedures were conducted between 10 a.m. and 7 p.m. Participants arrived at the Sleep Laboratory and completed the “Epworth Sleepiness Scale” (ESS)[@johns1991new]. Importantly, the instructions for completion of the ESS were modified to ask participants to indicate the *current* level of sleepiness, rather than the overall level of sleepiness experienced over the recent past.
+Nest, participants completed the learning phase of the paired associates (word-pair) task used to assess declarative memory (see below for details), followed by training in the marble maze task (see below) used to assess non-declarative memory. Subsequently, participants were prepared for the electroencephalography (EEG), electro-oculography (EOG), and electromyography (EMG) recordings and informed of their assigned condition (meditation, nap, wake). \par
 
-```{r, fig.cap = "Timeline Diagram Illustrating the Study Design. FMI = Freiburg Mindfulness Inventory. ESS = Epworth Sleepiness Scale. \\label{timelinelabel}", fig.pos = 'h', echo=FALSE}
-knitr::include_graphics('Figures/timeline.pdf')
-```
+Following the completion of the electrode set-up and calibration procedure, participants spent 60 minutes in a quiet room. For the wake condition, participants watched the documentary movie “Planet Earth” [@Fothergill2007] on a computer screen. Participants in the meditation condition were asked to complete a self-guided meditation session, and for the nap condition, they were instructed to sleep in the bed. During this period, brain activity, eye movements, and muscle activity were monitored with polysomnography. \par
+After the hour-long treatment, the researcher informed the participant that the hour was completed. After removing the electrodes, depending on their treatment condition, participants completed a self-report on the quality of their activity (nap, meditation, wake) in the room, as well as a post-treatment \textsc{ess} questionnaire (See Appendix F, G, H, I). Subsequently, they were asked to complete 50 trials of the maze task and the word-pair recall test (post-treatment tasks were completed in a counterbalanced order). At the end, participants were debriefed (see Appendix J) and given monetary compensation, if applicable. The overall timeline of the study design is illustrated in Table 1.
+
+\begin{table}[]
+\begin{tabular}{l|l}
+\multicolumn{1}{r|}{\textbf{\large{Initial Interview - day 1}}} &                                                                                                                              \\
+                                                        &                                                                                                                              \\
+                                                        & \begin{tabular}[c]{@{}l@{}}Familiarize participants with the environment\\ Sign the consent and other forms\end{tabular}     \\
+\multicolumn{1}{r|}{\textbf{\large{Experiment - day 2}}}        &                                                                                                                              \\
+                                                        &                                                                                                                              \\
+                                                        & \begin{tabular}[c]{@{}l@{}}Filling out the FMI, ESS\\ Memory tasks\\ Applying EEG, EOG, EMG electrodes\end{tabular}          \\
+                                                        &                                                                                                                              \\
+                                                        & \textbf{Treatment (nap - meditation - wake)}                                                                                 \\
+                                                        & \begin{tabular}[c]{@{}l@{}}Brain activities recorded by researcher\\ Duration: 60 minutes\end{tabular}                       \\
+                                                        &                                                                                                                              \\
+                                                        & \textbf{After treatment}                                                                                                     \\
+                                                        & \begin{tabular}[c]{@{}l@{}}Detaching the electrodes\\ Filling out the ESS and other self-reports\\ Memory tasks\end{tabular} \\
+                                                        &                                                                                                                              \\
+                                                        & \textbf{End of experiment}                                                                                                   \\
+                                                        & \begin{tabular}[c]{@{}l@{}}Debriefing\\ Monetary compensation\end{tabular}                                                   \\
+                                                        & total time: 3 hours.                                                                                                        
+\end{tabular}
+\caption{\textit{Diagram illustrating the timeline and study design. FMI = Freiburg Mindfulness Inventory. ESS = Epworth Sleepiness Scale.}}
+\end{table}
 
 ## Participants
-Participants were recruited from Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants should be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and should not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received \textsc{cad\$25} monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus \textsc{cad\$10} for their participation. The study is approved by the Queen’s University general ethics research board (See Appendix B). After the initial interview and checking for inclusion criteria, a total of `r nrow(RAW_Jan_2019)` completed the study (mean age = `r round(mean(RAW_Jan_2019$Age, digits=2))` $\pm$ `r trunc(sd(RAW_Jan_2019$Age))` years old, `r length(which(RAW_Jan_2019$Gender == "F"))` female). However, 3 individuals failed to meet the experiment criteria (e.g. participants who dozed off during the meditation session), leaving us with `r nrow(RAW_Jan_2019) -3` of participants.
+  Participants were recruited from the Queen’s University Psychology subject pool, advertised posts on the Queen’s University paid research studies Facebook group, posters displayed on campus and yoga studios of downtown Kingston, or word-of-mouth (see Appendix A). To be eligible for the study, participants were required to be between the ages of 18 and 65, with no previous diagnosis of psychiatric, neurological, or sleep disorders, and to not take sleep medications. Some specific inclusion criteria included the following: participants must nap for an average of three times a week over the last three weeks to be included in the nap condition; participants must practice meditation for an average of at least three times a week to be included in the meditation group. All participants received monetary compensation for the completion of the 3 hours study, with the exception of participants from Psychology 100 and 200 subject pools, who received a course credit plus monetary compensation for their participation. The study was approved by the Queen’s University General Research Ethics Board (See Appendix B). After the initial interview and verification of inclusion and exclusion criteria, a total of `r nrow(RAW_data) +5` participants completed the study (mean age = `r round(mean(RAW_data$Age, digits=2))` $\pm$ `r trunc(sd(RAW_data$Age))` years old, `r length(which(RAW_data$Gender == "F"))` female). However, 9 individuals were unable to comply with the experimental conditions (e.g., participants who dozed off during the meditation session or while watching the movie), leaving us with `r nrow(RAW_data) -4` of participants. In addition, a 2 standard deviation cut-off was applied to all behavioural tests. Accordingly, the behavioural performance of 1 participant from  paired associate task and 3 participants from marble maze task were excluded.
 
 
 ## Materials
 ### Memory tasks
 
-Declarative memory was assessed by a paired associate (Word-Pair) task. Using an online random noun generator and Microsoft Power Point, random word pairs are generated and displayed to participants.  During the training slide-show, a total of 60 word-pairs are displayed for 5 seconds each, with a 5 seconds inter-stimulus interval (\textsc{isi}) (blank slide with a central fixation point). The researcher asked participants to remember as many word-pairs as they can. Following the treatment condition, subjects were shown a new set of slides consisting of 20 word-pairs that were presented during the initial training session, 20 word-pairs that were novel combinations of words presented during the initial training session, and 20 word-pairs that were completely new to participants. During the test session, participants were asked to respond “yes” or “no” to the word-pairs: “yes” for a word-pair that they saw in the training session, and “no” for any combination that was different from training session. \par
+  Declarative memory was assessed by a paired associate (Word-Pair) task. Using an online random noun generator and Microsoft Power Point, random word pairs were generated and displayed to participants.  During the training slide-show, a total of 60 word-pairs were displayed for 5 seconds each, with a 5 seconds inter-stimulus interval (\textsc{isi}) (blank slide with a central fixation point). The researcher asked participants to remember as many word-pairs as they could Following the treatment condition, subjects were again shown a new set of 60 slides, consisting of 20 word-pairs that were presented during the initial training session, 20 word-pairs that were novel combinations of words that had been presented during the initial training session, and 20 word-pairs consisting of words that were not used in the training slide show. During the test session, participants were asked to respond “yes” or “no” to the word-pairs: “yes” for a word-pair that they saw in the training session, and “no” for any word combination that was different from those they seen during the training session. \par
 
-Non-declarative (procedural) memory was assessed using the *Marble Maze* visuo-motor task \autoref{marblemaze}, which involves two knobs on the right and lower side used for controlling the tilt of the surface [@brio]. The goal of the task is to pass a small marble along the lined path by turning the knobs. The score on each trial is determined by the number of the hole that the marble falls into, with higher scores indicating better performance and superior manual dexterity. \autoref{marblemazeabove} shows the plate, in which marbles ran through. The training and test session involved of 100 and 50 trials, respectively. To maximize the effort of the participants, the researcher asks them to take a break at the mid-point of the training session (i.e., after 50 trials), as well as introducing an incentive (e.g., gift card) to the participant obtaining the highest score.
-	
-```{r, fig.cap = "Brio Labyrinth Marble Maze game used as a visuomotor task to assess the procedural memory. \\label{marblemaze}",out.width='100%', fig.align="center", echo=FALSE}
+
+  Non-declarative (procedural) memory was assessed using the *Marble Maze* visuo-motor task, which consists of two knobs on the right and lower side used for controlling the tilt of the surface \autoref{marblemaze} [@brio]. The goal of the task is to pass a small marble along the lined path by turning the knobs \autoref{marblemazeabove}. The score on each trial is determined by the number of the hole that the marble falls into, with higher scores indicating better performance and superior manual dexterity. shows the plate, in which marbles ran through. The training and test session consisted of 100 and 50 trials, respectively. To reduce fatigue and maximize the effort of the participants, the researcher asked them to take a break at the mid-point of the training session (i.e., after 50 trials), as well as introducing an incentive (e.g., gift card) to the participant obtaining the highest score.
+
+
+```{r, fig.cap ="\\textit{Brio Labyrinth Marble Maze game used as a visuomotor task to assess the procedural memory}. \\label{marblemaze} ",out.width='100%', fig.align="center", echo=FALSE}
 knitr::include_graphics('Figures/Brio_marble_maze.jpg')
 ``` 
 
-```{r, fig.cap = "Plate of the game from above. \\label{marblemazeabove}",out.width='70%', fig.align="center", echo=FALSE}
+```{r, fig.cap = "\\textit{Top view of the game, showing the pre-determined path for the marble from the start point (at arrow) to the goal compartment (at asterik)}. \\label{marblemazeabove}",out.width='70%', fig.align="center", echo=FALSE}
 knitr::include_graphics('Figures/Brio_marble_maze_above.jpg')
 ``` 
 
 ### Self-report measures
-The Freiburg Mindfulness Inventory (FMI), a 14-item assessment, is administered to evaluate the experience of mindfulness in experienced, novice, and non-meditators. Scores range from 14 to 56, with higher scores indicating a greater degree of mindfulness [@walach2006measuring]. In this study, the \textsc{fmi} is employed to capture the participants’ ability to engage in a “mindful” state (see Appendix E). \par
-The Epworth Sleepiness Scale (ESS) is an 8-items questionnaire that measures general daytime sleepiness by assessing the subject’s self-reported tendency to fall asleep in various situations of daily life. A higher \textsc{ess} score is indicative of a great level of sleepiness [@johns1991new]. In this study, a modified version of \textsc{ess} is employed to measure sleepiness before and after the treatment (see Appendix I). \par
+  The Freiburg Mindfulness Inventory (FMI) is a 14-item assessment designed to evaluate the experience of mindfulness in experienced, novice, and non-meditators. Scores range from 14 to 56, with higher scores indicating a greater degree of mindfulness [@walach2006measuring]. In this study, the FMI was employed to capture the participants’ ability to engage in a “mindful” state (see Appendix E). \par
+The Epworth Sleepiness Scale (ESS) is an 8-items questionnaire that measures general daytime sleepiness by assessing the subject’s self-reported tendency to fall asleep in various situations of daily life. A higher ESS score is indicative of a great level of sleepiness [@johns1991new]. In this study, a modified version of ESS was employed to measure sleepiness before and after the treatment (see Appendix I). \par
 
-In addition to these standardized questionnaires, participants are asked to fill out a condition-related self-report. Meditators report if they meditated, as well as the length and the quality of their meditation session on a scale of 1 to 5, with higher numbers indicating greater quality. In a similar format, participants in napping condition reported their sleep quality, and people in wake condition reported whether they fell asleep while watching the movie (see Appendix F, G, H).
+  In addition to these standardized questionnaires, participants were asked to fill out a condition-related self-report. Meditators self-reported if they meditated, as well as the length and the quality of their meditation session on a scale of 1 to 5, with higher numbers indicating greater quality. In a similar format, participants in the napping condition self-reported their sleep quality (1-5 point, with higher numbers indicative of higher nap quality), and people in wake condition reported whether they fell asleep while watching the movie (see Appendix F, G, H).
 
-## Apparatus
-### Electrode placements and recordings
 
-Polysomnography was recorded employing standard procedures, as follows:
+## Polysomnographic recordings
 
-*  EEG: O1-F7, O2-C4, according to the 10-20 system, with bilateral mastoid references.
+Polysomnography was conducted employing standard procedures, as follows:
+
+*  EEG: O1-F7, O2-C4, according to the international 10-20 electrode placement system, with bilateral mastoid references.
 *  EOG: Right and left outer canthus, with the bridge of the nose as reference.
 *  EMG: At the chin for assessing jaw muscle tone.
 
-\autoref{eegcaplabel} shows the schematic illustration of \textsc{eeg} electrode placements. All signals were recorded using the software package Chart (v. 5, AD Instruments, Toronto, Ontario).
+\autoref{eegcaplabel} shows a schematic illustration of EEG electrode placements. The electrodes used were Genuine Grass Gold Disc Electrodes (Natus Neurology, Ireland). All signals were amplified (Grass P511 amplifiers, half-amplitude filters set at 0.3 Hz and 10 kHz), digitized (200Hz; PowerLab /30 system running LabChart software, v. 8.1.11, AD Instruments, Toronto, Ontario), and stored for subsequent offline analysis (using LabChart software).
 
 ``` {r include=FALSE}
 ipak2 <- function(pkg){
@@ -99,7 +124,7 @@ packages <- c("eegkitdata","bigsplines","quadprog","ica","signal","rgl",
 ipak2(packages)
 ```
 
-``` {r, fig.cap = "Schematic representation of employed electroed in the 10-20 system. \\label{eegcaplabel}", echo = FALSE }
+``` {r, fig.cap = "\\textit{Schematic representation of employed electroed montage based on the 10-20 system. The electrodes depicted in red were used for the present experiments.}. \\label{eegcaplabel}", echo = FALSE }
 
 myelectrodes <- rep("light blue",24)
 enames <- c("A1", "A2", "FP1", "FP2", "FPZ", "F7", "F3", "FZ", "F4", "F8", "NZ",
@@ -116,13 +141,13 @@ eegcap(electrodes = "10-20", col.point = myelectrodes)
 ```
 
 ### Measures of sleep
-Under blind conditions, \textsc{eeg} recordings of the sleep were visually scored using Rechtschaffen & Kales sleep scoring manual and its recent proposed amendments [@hobson1969manual, @sleep2001proposed, @silber2007visual]. The amount and duration of the following parameters were computed: number of arousals, sleep onset latency, Stage 1 sleep, Stage 2 sleep, slow wave sleep (\textsc{sws}), and total sleep time. \textsc{sws} was calculated by adding time in sleep stage 3 and 4. Sleep onset latency was determined with reference to the time when lights were turned off [@plihal1999effects]. For participants in the wake and meditation condition, the \textsc{eeg} was reviewed to confirm that sleep did not occur.
+  Under blind conditions, EEG recordings obtained in nappers were visually scored using the Rechtschaffen & Kales sleep scoring manual and its recent amendments [@hobson1969manual, @sleep2001proposed, @silber2007visual]. The number and/or duration of the following parameters were computed: number of arousals, sleep onset latency, Stage 1 sleep duration, Stage 2 sleep duration, slow wave sleep (SWS) duration, and total sleep time. SWS was calculated by adding time in sleep stages 3 and 4. Sleep onset latency was determined with reference to the time when lights were turned off and the door was closed [@plihal1999effects]. For participants in the wake and meditation condition, the EEG record was reviewed to confirm that sleep did not occur.
 
 ### Measures of meditation
-For meditators, spectral analysis using fast Fourier transform was applied to assess the mean power spectral density in the frequency bands of interest (0.5-50 Hz). \textsc{eeg} records were divided into 30-seconds epochs, then using single fast Fourier transform (FFT), two most prominent frequencies were recorded. The number of epochs, in which an individual spent in a *meditative state* were recorded and used to correlate with his/her performance on behavioural tests. In addition, the average of recorded frequencies were used to correlate with their degree of mindfulness, using \textsc{fmi}. Finally, a series of cluster analysis using eegUtils package were performed. <!-- this section needs to be completed with the data gathered from R -->
+  For meditators, EEG records were subjected to spectral analysis using fast Fourier transform computed for 30s EEG epochs to determine power spectral density in the frequency bands of interest (2-20 Hz). Based on these power spectra, the two dominant frequencies were identified for each 30 seconds, and epochs with dominant frequencies in the alpha-theta range were considered to constitute a "meditative state", based on prior research showing enhancement of alpha-theta activity during meditation [@lomas2015systematic, @lee2018review]. In addition, the averages of recorded frequencies were used to correlate with their degree of mindfulness, as indicated by FMI. <!--Finally, EEG data were subjected to a series of cluster analysis using eegUtils package were performed.  ### this section needs to be completed with the data gathered from R -->
 
 ### Measures of declarative memory
-In order to capture the overall performance of participants, I looked for a single metric that encompasses all of the hits (True Positives), false alarms (False Positives), misses (False Negative), and correct rejections (True Negatives). The performance of an individual discriminating between two classes (positive and negative) is described by an confusion matrix (see Table \ref{confusion}). \par
+  In order to capture the overall performance of participants in the paired associate task, single performance measure was required that encompasses all of the hits (True Positives), false alarms (False Positives), misses (False Negative), and correct rejections (True Negatives). The performance of an individual discriminating between two classes (positive and negative) is described by a confusion matrix (see Table \ref{confusion}). \par
 
 
 \begin{table} [H]
@@ -137,11 +162,11 @@ Negative & FP & TN \\
 \hline
 \end{tabular}
 \setstretch{1}
-\caption{Confusion matrix was used to define the performance of participants in paired-associate task. TP = True Positive. FP = False Positives. FN = False Negative. TN = True Negatives} 
+\caption{\textit{Confusion matrix was used to define the performance of participants in paired-associate task. TP = True Positive. FP = False Positives. FN = False Negative. TN = True Negatives}} 
 \label{confusion}  
 \end{table}
 
-Since the declarative memory test consisted of 20 old items and 40 novel + recombined items, I had to choose a performance measure, which was non-sensitive to class imbalance problem [@straube2014evaluate]. I decided to use Geometric Mean (G-Mean) to calculate the overall performance (see \autoref{GMean}). TPR stands for True Positive Rate (see \autoref{TPR}) and TNR stands for True Negative Rate (see \autoref{TNR}).
+  Since the declarative memory test consisted of 20 old items and 40 novel + recombined items, I had to choose a performance measure that is non-sensitive to the class imbalance problem [@straube2014evaluate]. I decided to use the Geometric Mean (G-Mean) to calculate overall performance (see \autoref{GMean}). TPR stands for True Positive Rate (see \autoref{TPR}) and TNR stands for True Negative Rate (see \autoref{TNR}).
 
 \begin{equation}
 \label{GMean}
@@ -160,34 +185,37 @@ TNR = \frac{TN}{TN + FP}
 
 
 ### Measures of non-declarative memory
- Median is a robust measure of central tendency and is less affected by outliers and skewed data than the mean, and is usually the preferred measure when the distribution is not symmetrical. Therefore, I decided to calculate the median of the last ten trials of the training session (trials 91-100), and compare that to the median of the first ten trials of the test session (trials 1-10). 
+  The median is a robust measure of central tendency and is less affected by outliers and skewed data than the mean, making it a preferred measure when the data distribution is not symmetrical. Therefore, I decided to calculate the median of the last ten trials of the training session (trials 91-100), and compare that to the median of the first ten trials of the test (i.e., memory retention) session (trials 1-10). 
 
 ## Data analysis
-Statistical analyses (Null-hypothesis significant testing, Bayesian inferences analysis, and electrophysiological measures) were carried out using the R software package (Version 1.1.463; R Core Team). Calculation of the sleep parameters relied on Microsoft Excel for Mac (Version 16.19; Microsoft).
+  Statistical analysis was performed using R (R Development Core Team, 2008) and the psycho [@makowski2018psycho], and the rstanarm [@gabry2016rstanarm] packages. The analysis was performed in the Bayesian framework as it was more reliable, with better accuracy in noisy or small data samples, a more straightforward interpretation
+and less prone to type I error [@van2014bayesian, @jarosz2014odds, @makowski2019dispositional, @wagenmakers2018bayesian]. The frequentist
+equivalent of statistical analysis, which returns similar results, as well as more details of Bayesian model can be found in the Appendix <!-- name of the page -->. Calculation of the sleep parameters relied on Microsoft Excel for Mac (Version 16.19; Microsoft).
 
-### Assumptions
-For each \textsc{anova}, I checked the following:
+<!-- ### Assumptions
+For each ANOVA, I checked the following:
 
 1.  Normality of model residuals (assessed by QQplot and Shapiro-Wilk test)
 2.  Homogeneity of Variance (assessed by Brown-Forsyth test and Levene's test)
-3.  Linearity (assessed by observed vs fitted values plot)
+3.  Linearity (assessed by observed vs fitted values plot) -->
 
 ### Declarative memory
-By fitting linear models, I carried out series of one-way between-subjects' \textsc{anova} for the comparison of the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in paired-associate task using G-Mean. The significance threshold was determined using Holm correction with $\alpha$ set to .05.  
-Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo Gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict G-Mean `(formula = GMean ~ Condition)`.
+  Bayesian inference was performed using Markov Chain Monte Carlo (MCMC) Gaussian model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict G-Mean `(formula = GMean ~ Condition)`. By fitting a general linear model, I compared the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in paired-associate task using G-Mean. For the general linear models, all priors were set as mildly informative (normal distributions with mean=0). I reported several characteristics of the posterior distribution of the effects: the median (a robust estimate comparable to the beta from frequentist linear models), MAD (median absolute deviation, a robust equivalent of standard deviation) and the 90% credible interval. Instead of the p value as an index of effect existence, I also computed the maximum probability of effect (MPE), which is the maximum probability that the effect is different from 0 in the median’s direction. For our analyses, I considered an effect as probable if its MPE is higher than 90%.
 
-Additionally, I ran several exploratory logistic regressions on the role of gender and handedness, and moderated regression to explore the relationship between the degree of mindfulness and G-Mean values.
-To assess the effect of \textsc{sws}, I divided the napping condition into two groups (\textsc{sws} and no-\textsc{sws}) and analyses were carried out separately.
+  Additionally, I ran several exploratory logistic regressions on the role of gender on the G-Mean values.
+To assess the effect of SWS, I divided the napping condition into two groups (SWS and no-SWS) and analyses were carried out separately.
 
 ### Non-declarative memory
-Primarily, by fitting linear mixed-effects models, I carried out series of repeated-measures' \textsc{anova} to compare the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in Marble Maze task using median values.
-Also, I carried out series of Bayesian Inferences. I fitted a Markov Chain Monte Carlo Gaussian `(link = identity)` model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict Median Scores `(formula = MedinScores ~ Condition + (1 | Code))`.
+  Bayesian Inferences.was performed using Markov Chain Monte Carlo (MCMC) Gaussian model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict the Median Scores `(formula = MedinScores ~ Condition + (1 | Code))`. For mixed models, participants were set as the random factor. By fitting linear mixed-effects models, I compared the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in the Marble Maze task using median values. I reported several characteristics of the posterior distribution of the effects: the median (a robust estimate comparable to the beta from frequentist linear models), MAD (median absolute deviation, a robust equivalent of standard deviation) and the 90% credible interval. Instead of the *p* value as an index of effect existence, I also computed the maximum probability of effect (MPE), which is the maximum probability that the effect is different from 0 in the median’s direction. For our analyses, I considered an effect as probable if its MPE is higher than 90%.
+  
+  Additionally, I ran several exploratory logistic regressions on the role of gender on the differences of median values.
+To assess the effect of SWS, I divided the napping condition into two groups (SWS and no-SWS) and analyses were carried out separately.
 
-Additionally, I ran several exploratory logistic regressions on the role of gender and handedness, and moderated regression to explore the relationship between the degree of mindfulness and the differences of median values.
-To assess the effect of \textsc{sws}, I divided the napping condition into two groups (\textsc{sws} and no-\textsc{sws}) and analyses were carried out separately.
-
+### Spectral analysis of meditators' brain oscillations
+  Bayesian correlation between the alpha and theta power spectra and behavioural performance on memory retention were calculated. Additionally, we ran exploratory correlations between the alpha and theta power spectra and history of meditation practice (in months), as well as their level of mindfulness, indicated by FMI.
+  
 #### Outliers
-In total, records of three individuals were excluded from the analysis. Two individuals fell asleep through the meditation session, and one participant had numerous arousals (n=11) throughout the napping session.
+  In total, data of four individuals were excluded from the analysis. Three individuals fell asleep through the meditation session, and one participant had numerous arousals (n=11) throughout the napping session.
 \newpage
 
 # References
