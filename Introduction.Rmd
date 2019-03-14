@@ -1,0 +1,144 @@
+---
+title: "Introduction"
+author: "Mohammad Dastgheib"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  word_document: 
+    fig_caption: yes
+  pdf_document:
+    fig_caption: yes
+    number_sections: yes
+    includes:
+      in_header: preamble-latex.tex
+indent: true
+urlcolor: black
+linkcolor: black
+fontsize: 12pt
+geometry: margin = 1 in
+csl: apa.csl
+bibliography:
+- References.bib
+- r_references.bib
+linestretch: 2 
+header-includes:
+- \usepackage{placeins}
+- \usepackage{setspace}
+- \usepackage{chngcntr}
+- \usepackage{booktabs}
+- \usepackage{caption}
+- \counterwithin{figure}{section}
+- \counterwithin{table}{section}
+---
+
+# Introduction
+## Historical background
+
+The nature of sleep and its mechanism and function has preoccupied the minds of philosophers and scientists for centuries. Various hypotheses have been proposed to explain how sleep affects our brain. As early as 1885, Ebbinghaus found that forgetting is function of time and in 1900, M&uuml;ller indicated that fresh memories are required to be slowly consolidated over time to become resistant against interference and decay [@ebbinghaus1885gedachtnis; @muller1900experimentelle]. However, in 1924 the first relationship between sleep and memory consolidation was established, arguing that there was a noticeable difference between the forgetting rate of individuals who slept and those who stayed awake [@jenkins1924obliviscence]. Since then, numerous studies have been conducted, suggesting that sleep plays a pivotal role in memory consolidation [@buzsaki1989two; @buzsaki1996hippocampo; @plihal1999effects; @mednick2003sleep; @walker2003sleep; @born2006sleep; @korman2007daytime; @marshall2007contribution; @rasch2007maintaining; @diekelmann2010memory; @lau2010daytime; @chatburn2014complex]. \par
+Nonetheless, to develop an understanding of the relationship between sleep and memory, one must gain information regarding the systems of memory, mechanism of memory formation, as well as the characteristics and mechanisms of sleep.
+
+## Systems of memory
+
+Memory systems have been categorized into declarative and non-declarative memory (also known as procedural memory) [@squire1992memory]. This dichotomy has been a common distinction in neuropsychological studies and memory researches. Although some researches have introduced emotional memory as a separate type of memory system [@cahill1995amygdala], in this project, we are interested to study declarative and non-declarative memory. \par
+
+### Declarative memory
+
+  Declarative memory describes the retention of events (episodic) and facts (semantics). Encoding is rapid, typically explicit, and short-term retrieval crucially depends on hippocampal function. These memories are highly susceptible to decay, interference and forgetting [@marshall2007contribution]. 
+
+### Non-declarative memory
+
+Also known as procedural memory, essentially describes the memories for perceptual, stimulus-response and motor skills. Generally, encoding can involve both explicit and implicit processes. Their encoding and retrieval heavily rely on cortico-striatal and cortico-cerebellar loops. Within this memory system, the acquisition of skills is gradual with repeated practice; however, once automated, they remain reasonably stable [@marshall2007contribution].\par
+
+It should be noted that the neuroanatomical distinction provided above are not clear. In fact, some fMRI studies have reported that hippocampus is active during the explicit and implicit motor skill learning [@schendan2003fmri]. It is fair to say that at least for the initial acquisition of a skill, hippocampus is involved [@marshall2007contribution].\par
+
+## Sleep architecture
+
+Sleep is comprised of cyclic occurrences of rapid eye movement (REM) and non-REM sleep. NREM sleep includes slow wave sleep (SWS) or stages 3 and 4, and lighter sleep stages 1 and 2. In the first part of the night, humans undergo high amounts of SWS, whereas REM sleep prevails the second half of the night. Apart from neuromodulator activities, specific patterns of electrical field potential oscillation distinguish SWS from REM sleep. Slow oscillations, spindles and sharp wave-ripples are the most prominent oscillations throughout the SWS period. Overall pattern of sleep activity is shown in \autoref{hypnogram}. \par
+
+```{r, fig.cap = "\\textit{A sample hypnogram (electroencephalogram of sleep) showing sleep cycles characterized by increasing paradoxical (REM) sleep.}. \\label{hypnogram}",out.width='70%', fig.align="center", echo=FALSE}
+knitr::include_graphics('Figures/Sleep_Hypnogram.png')
+``` 
+
+## Mechanisms of memory consolidation
+
+In their comprehensive review of memory functions of sleep, Born and Diekelmann claim that during the process of *consolidation*, newly acquired and initially liable memories, which encoded during wake are transformed into more stable representation that becomes integrated into the network of pre-existing long-term memories [@diekelmann2010memory]. Further, consolidation involves the active re-processing (“replay” or “reactivation”) of new memories in the neural networks that were involved in the encoding process. Given the ‘off-line’ nature of sleep, this state provides an efficient environment for the brain to re-process information, partially due to the reduction in interference by incoming (“online”) sensory information during sleep. Some researchers have proposed that in addition to saving energy and restorative functions, the memory functions of sleep might be the ultimate evolutionary explanation of the lack of consciousness associated with sleep [@kavanau1997memory].\par
+
+### Two-stage model of memory consolidation
+
+Current understanding of memory consolidation conforms to Hebb’s rule [@hebb1961organization]. Within this paradigm, the consolidation process relies on the offline re-activation of neural circuits that were activated during the encoding of the information in the wakefulness. This process facilitates both the gradual redistribution and reorganization of memory representations to sites for long-term storage (also known as two-stage model of memory consolidation), and the enduring synaptic changes that are necessary to stabilize memories. Several studies have reported that these processes will occur SWS [@diekelmann2010memory; @buzsaki1989two; @buzsaki1996hippocampo].
+ 
+  
+Two hypotheses have been proposed to explain the underlying mechanisms of memory consolidation: synaptic homeostasis and active system consolidation.\par
+
+#### Synaptic homeostasis
+
+This model assumes that consolidation is a by-product of the global synaptic downscaling happening throughout sleep. Synaptic homeostasis postulates that learning during wake leads to progressively greater saturation of synaptic connections. Thus, the main role of sleep is to re-normalize these synaptic weights. Re-normalization process occurs through circuits which are only rarely activated, or which fit poorly with established linkages that are progressively depressed and eventually rendered non-functional [@tononi2014sleep]. Downscaling is thought to occur preferentially during NREM as a result of low levels of neuromodulators in the cortex combined with the synchronous action of electrophysiological events such as sleep spindles, sharp wave-ripples and slow waves [@chatburn2014complex].
+
+#### Active system consolidation
+
+Originating from the dual process hypothesis, the active system consolidation hypothesis argues that events during waking are encoded in both neocortical and hippocampal networks [@rasch2007maintaining]. During SWS, synchrony of thalamo-cortical spindles and hippocampal sharp wave-ripples, induced by the slow oscillation of neocortex, causes the reactivation of representations stored in the hippocampus. Through synchronizing these events, ripple-spindle events are formed, which enable the transfer of the re-activated information from the hippocampus to the neocortex, which allows for a more stable, long-lasting storage of information. The role of sleep in these processes is thought to be crucial, since it provides an optimal state for the re-activation, transfer, and storage of those newly acquired memories into pre-existing knowledge networks [@chatburn2014complex].
+
+It should be noted that these two hypotheses are not mutually exclusive and they may act together.
+
+
+### Influences of sleep stages on memory consolidation 
+
+Historically, most studies focused on REM and how REM sleep deprivation affects memory formation. However, this technique has some drawbacks because of repeated awakening stress and its adverse effects on memory functions. Recent methods involve pharmacological suppression of certain stages of sleep.\par
+Traditionally, it is thought that declarative memories are consolidated during slow-wave sleep (SWS), whereas the rapid eye movement stage of sleep (REM sleep) is associated with the consolidation of non-declarative memories [@plihal1999effects].
+This distinction is in accordance with *dual process hypothesis*, which claims that SWS facilitates hippocampus-dependent (declarative) memories, whereas REM sleep supports hippocampus-independent memories (non-declarative) [@plihal1999effects]. Further studies showed that SWS can also improve non-declarative memory and REM sleep can improve the declarative memory as well. To explain these findings, *sequential hypothesis* argued that optimum benefits of the consolidation of both memory systems occur when SWS and REM sleep take place is succession [@giuditta1995sequential]. Eventually, Diekelmann & Born (2010) presented compelling evidences from various studies to challenge these hypotheses. They claimed that specific neuropsychological mechanisms of each sleep stage are responsible for memory consolidation, and that those mechanisms are shared by different stages of sleep. \par 
+
+
+### Are we ‘gaining’ during sleep?
+
+Literature on sleep and memory claims that sleep “strengthens” the association and creates changes in memory representations. However, it is of importance to distinguish between ‘stabilization’ and ‘enhancement’. According to Born and Diekelmann, *stabilization* refers to the resistance to interference from another similar task, whereas *enhancement*, or improvement of performance, happens at re-testing, in the absence of additional practice during the retention interval. In a study by Mednick and her colleagues, the memory retention on procedural task after 60-90 minutes nap contained either SWS or SWS+REM were compared. They reported that 60 minutes naps with both SWS and REM produced significant improvements, whereas 60 minutes naps with SWS only showed no improvement. In other words, nap with SWS but no REM reversed the deterioration but did not produce actual improvements. Therefore, they suggested that SWS may serve to stabilize performance and REM may actually facilitate performance improvements [@mednick2003sleep]. Nonetheless, the debate over to what extent these improvements are performance ‘gains’ induced by sleep continues to date.\par
+
+### Advantages of nap over sleep experiment design
+
+It is of interest to note that, although significant consolidation benefits have been observed after an 8-hour night of sleep, a number of studies have now demonstrated similar effects with much shorter sleep episodes, such as naps (often between 20-60 minutes) on both declarative and procedural memory during the daytime [@plihal1997effects; @mednick2003sleep; @tucker2006daytime; @korman2007daytime; @axmacher2008ripples; @ficca2010naps; @lau2010daytime]. \par
+Studying nap provides a unique opportunity for isolating NREM sleep. Since participants in a nap experiment design learn and are re-tested at the same time of the day, they are not being sleep deprived during the day; therefore, circumventing deprivation-induced stress and circadian factors [@lau2010daytime]. \par
+The beneficial effects of napping on memory consolidation is not limited to healthy individuals. In one study, researchers found that the benefits of memory consolidation on declarative memory is observable in patients with schizophrenia and moderate major depression [@seeck2010effects]. In conclusion, napping can be utilized as a valid alternative to overnight sleep in experimental designs that probe the effects of sleep on learning and memory.\par
+
+While the role of sleep is well-established, it is less clear if memory consolidation is a truly sleep-specific phenomenon, or if there are some discernible components of sleep that can also be observed during waking and that may promote consolidation during non-sleep states (e.g. relaxation, quiet wakefulness, reduced sensory processing and interference). To investigate this question, we are interested in studying how meditation, as an altered state of consciousness, can affect the consolidation of declarative and non-declarative memories. \par
+
+## Meditation
+
+
+### Definition and variations 
+
+Meditation can be defined as a form of mental training, with the aim of improving core psychological capacities (i.e. attentional and emotional self-regulation). A variety of complex practices are classified as meditation, such as mindfulness, mantra meditation, yoga, tai chi, and chi gong. Among those practices, *mindfulness meditation*, has been studied extensively over the past two decades [@tang2015neuroscience].
+
+
+### Mindfulness meditation
+
+ Originated from Buddhism around 5th century BC, mindfulness meditation has its roots in Hindu culture, back to 3rd millennium BC. According to Zeidan et al.[-@zeidan2010mindfulness], mindfulness meditation focuses on the sensations of the breath/body while maintaining a relaxed state of mind. In other words, mindfulness meditation requires both “the regulation of attention and the ability to approach one’s experience with openness and acceptance” [@tang2015neuroscience].
+ It has two common features: *focused attention* and *open monitoring*. Most mindfulness meditation practices begin with “a period of focused attention on a target” (i.e., breath) to focus awareness, and is followed by “the more receptive state of open-monitoring” [@lomas2015systematic]. In addition to personal practice, variations of mindfulness meditation have been employed for various clinical interventions as well, such as Integrative body-mind training (IBMT) and Mindfulness-Based Stress Reduction (MSBR) program, which has been prescribed in the treatment of a variety of mental conditions [@kabat1982outpatient; @tang2015neuroscience]. 
+
+#### Mindfulness and memory
+
+With regards to memory, Brown and his colleagues [-@brown2016mindfulness], defined mindfulness as a specific type of attention. They proposed that meditation, by enhancing the quality of attention, improves the quality of encoding with more fidelity into working memory. It is widely accepted that episodic memory is necessary for Long term memory (LTP) formation. Additionally, it is known that both attention and working memory improve the LTM.
+
+In research settings, typically, mindfulness practitioners have been divided into dispositional mindfulness (aka trait mindfulness) and deliberate (intentional) mindfulness meditation. Mindfulness meditation temporarily changes the condition of the brain and its corresponding pattern of activity or connectivity (state change), and eventually it alters personality traits following longer periods of practice [@tang2017traits].
+
+#### Neural oscillations of mindfulness
+
+Some of the neurochemical and electrophysiological characteristics of meditation resembles of sleep, such as the decrease in high-frequency (beta, gamma) electrocortical activity, together with an increase in theta-alpha range (4 - 12 Hz) power activity event-related synchronization [@shaw1996intention; @lagopoulos2009increased; @lomas2015systematic; @dentico2018acute].
+Alpha activity (8 - 12 Hz) is typically defined by large rhythmic waves. It is typically associated with relaxation and the lack of active cognitive processing, a phenomenon called '*alpha desynchronization*'. Thus, higher levels of alpha desynchronizations indicate an increase in cognitive processing and external attention, whereas higher alpha synchrony is indicative of internal attention. 
+Theta activity (3.5 - 7.5 Hz) is another diagnostic oscillation of a meditative state. Previous researches have reported a positive correlation between theta power and the level of meditation experience [@kasamatsu1966electroencephalographic; @aftanas2001human]. Further, comparison of monks and novice meditators during Zen meditation have shown that alpha increase across all groups, whereas increase in theta activity was proportional to the level of meditative experience [@murata1994quantitative]. In sum, the co-presence of alpha and theta signifies a state of *relaxed alertness* [@lomas2015systematic].
+
+## Quiet rest
+
+Quiet rest is an instance of non-sleep-related behaviours, which has been shown to enhance memory retention [@born2006sleep]. Brokaw and her colleagues (2016) [-@brokaw2016resting] proposed that “quiet rest might facilitate memory via active consolidation mechanisms similar to those operating during sleep”. Some studies have demonstrated that during quiet rest in humans, hippocampal sharp-wave ripples, an indicator of reactivation, were prevalent [@axmacher2008ripples; clemens2011fine]. In addition, alpha, theta, and delta (0.5 - 2 Hz) activity was observed in quiet rest [@brokaw2016resting]. Taking this into consideration, quiet rest may also serve as a valuable non-sleep-related alternative for our study. 
+
+## Aims of the current study
+
+The aims of the current study are:
+\begin{enumerate}
+  \item To compare brain oscillatory activities of participants during napping, meditation and wakefulness.
+  \item To compare behavioural performances of all groups on declarative and non-declarative tasks.
+  \item To assess to what extent a self-guided meditation session can impact the memory consolidation. 
+\end{enumerate}
+
+The overall goal of this study is to examine whether shared components of sleep and some non-sleep-related activities influence memory consolidation in humans. We hypothesize that participants in the napping and meditation treatment groups will perform better than those in the wake condition on the memory tasks.
+
+\newpage
+# References
+\setstretch{1.5}
