@@ -67,3 +67,51 @@ knitr::include_graphics('Appendix/Epworth.pdf')
 ```{r, fig.cap = "Debriefing and explanation of the study.", out.width="90%", fig.align="center", echo=FALSE}
 knitr::include_graphics('Appendix/Debrief.png')
 ```
+\newpage
+#Appendix K.
+
+## Frequentist report
+
+### Declarative memory
+
+The overall model predicting GMean `(formula = GMean ~ 1 + as.factor(Condition))` explains 7.64% of the variance of the endogen (adj. R^2^ = 4.61). The model's intercept is at 0.80 (SE = 0.025, 95% CI [0.76, 0.85]). Within this model:
+   - The effect of as.factor(Condition)NAP is not significant (beta = -0.026, SE = 0.033, 95% CI [-0.093, 0.040], t = -0.79, p > .1) and can be considered as small (std. beta = -0.23, std. SE = 0.29).
+   - The effect of as.factor(Condition)WAKE is significant (beta = -0.080, SE = 0.036, 95% CI [-0.15, -0.0078], t = -2.22, p < .05) and can be considered as medium (std. beta = -0.70, std. SE = 0.31).
+
+### Non-declarative memory
+
+#### non-SWS
+
+The overall model predicting MedianScores `(formula = MedianScores ~ Condition + (1 | Code))` has an total explanatory power (conditional R^2^) of 59.98%, in which the fixed effects explain 4.50% of the variance (marginal R2). The model's intercept is at 5.53 (SE = 0.55, 95% CI [4.46, 6.60]). Within this model:
+   - The effect of ConditionNAP is not significant (beta = -0.63, SE = 0.93, 95% CI [-2.42, 1.17], t(43) = -0.68, p > .1) and can be considered as small (std. beta = -0.24, std. SE = 0.35).
+   - The effect of ConditionWAKE is not significant (beta = -1.29, SE = 0.78, 95% CI [-2.81, 0.23], t(43) = -1.65, p > .1) and can be considered as small (std. beta = -0.49, std. SE = 0.30).
+
+#### SWS
+
+The overall model predicting MedianScores `(formula = MedianScores ~ Condition + (1 | Code))` has an total explanatory power (conditional R^2^) of 67.51%, in which the fixed effects explain 6.22% of the variance (marginal R2). The model's intercept is at 5.53 (SE = 0.51, 95% CI [4.54, 6.52]). Within this model:
+   - The effect of ConditionNAP is not significant (beta = -1.24, SE = 0.77, 95% CI [-2.74, 0.25], t(47) = -1.61, p > .1) and can be considered as medium (std. beta = -0.52, std. SE = 0.32).
+   - The effect of ConditionWAKE is significant (beta = -1.29, SE = 0.72, 95% CI [-2.69, 0.11], t(47) = -1.79, p = 0.08) and can be considered as medium (std. beta = -0.54, std. SE = 0.30).
+
+\newpage
+#Appendix L.
+
+**Central Posterior Uncertainty Intervals**
+
+## Declarative memory
+
+```{r, fig.cap = "Central Posterior Uncertainty Intervals of the Declarative memory model.", out.width="90%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/CPI_Decl.pdf')
+```
+\newpage
+#Appendix L. cont.
+
+## Non-declarative memory
+
+**Central Posterior Uncertainty Intervals**
+```{r, fig.cap = "Central Posterior Uncertainty Intervals of the Non-declarative memory model, non-SWS.", out.width="60%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/PCI_NONDECL_nonSWS.pdf')
+```
+
+```{r, fig.cap = "Central Posterior Uncertainty Intervals of the Non-declarative memory model, non-SWS.", out.width="60%", fig.align="center", echo=FALSE}
+knitr::include_graphics('Appendix/CPI_NONDECL_SWS.pdf')
+```
