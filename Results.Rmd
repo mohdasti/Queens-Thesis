@@ -1,0 +1,816 @@
+---
+bibliography:
+- References.bib
+- r_references.bib
+csl: apa.csl
+fontsize: 12pt
+geometry: margin = 1 in
+header-includes:
+- \usepackage{placeins}
+- \usepackage{setspace}
+- \usepackage{chngcntr}
+- \counterwithin{figure}{section}
+- \counterwithin{table}{section}
+indent: yes
+linestretch: 2
+linkcolor: black
+output:
+  pdf_document:
+    fig_caption: yes
+    includes:
+      in_header: preamble-latex.tex
+    number_sections: yes
+  html_document:
+    df_print: paged
+  word_document:
+    fig_caption: yes
+urlcolor: black
+---
+```{r setup, include=FALSE}
+#Loading required packages
+required_packages <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
+
+packages <- c("rio","readxl", "tidyverse","devtools","dplyr","ggplot2","magrittr","Hmisc","psycho","lmerTest","rstanarm","jtools","bayesplot","corrplot")
+required_packages(packages)
+
+# importing the main excel file from Github repository (mohdasti)
+RAW_data <- rio::import('https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/RAW_data.xlsx?raw=true', na="N/A")
+View(RAW_data)
+RAW <- RAW_data # rename for simplicity
+
+
+#creating subsets of data 
+MED <- RAW[which(RAW$Condition == 'MED'), ]
+WAKE <- RAW[which(RAW$Condition == 'WAKE'), ]
+NAP <- RAW[which(RAW$Condition == 'NAP'), ]
+NAP_SWS <- RAW[which(RAW$percentSWS != 0), ]
+NAP_noSWS <- RAW[which(RAW$percentSWS == 0), ]
+
+# Calculating Geometric Mean and Difference of Medians (two main measures of performance for the declarative and non-declarative memory)
+# True Positive rate
+RAW$TPR <-
+  RAW$`Hit ratio` / (RAW$`Hit ratio` + RAW$`False Alarm ratio`)
+#True Negative rate
+RAW$TNR <-
+  RAW$`Correct Rejection ratio` / (RAW$`Correct Rejection ratio` + RAW$`Miss ratio`)
+#calculating the G-Mean
+RAW$GMean <- 
+  sqrt(RAW$TPR * RAW$TNR)
+# Difference of the medians
+RAW$Median.Diff <- 
+  RAW$`Median 1-10` - RAW$`Trial 91-100 median` 
+
+#Excluding outliers - creating modified datasets
+## any data points that is beyond ±2 SD - these exculusion are specific to each task (one participant may be excluded from declarative task (for being over ±2 SD), but its score for non-declarative memory may be used)
+## those who failed to meet the general criteria of their treatment condition (i.e. falling asleep in MED)
+## those who their number of arousals were beyond ±2 SD 
+## in addition, I excluded LN7 from non-declarative because it was acting like an outlier in the regression line of the SWSpercent graph
+
+#MED$Median.Diff[abs(scale(MED$Median.Diff)) > 2]
+#MED$GMean[abs(scale(MED$GMean)) > 2]
+#WAKE$Median.Diff[abs(scale(WAKE$Median.Diff)) > 2]
+#WAKE$GMean[abs(scale(WAKE$GMean)) > 2]
+#NAP_SWS$Median.Diff[abs(scale(NAP_SWS$Median.Diff)) > 2]
+#NAP_noSWS$Median.Diff[abs(scale(NAP_noSWS$Median.Diff)) > 2]
+#NAP_SWS$GMean[abs(scale(NAP_SWS$GMean)) > 2]
+#NAP_noSWS$GMean[abs(scale(NAP_noSWS$GMean)) > 2]
+
+#creating two separate datasets based on the memory task
+RAW_declr <- RAW[-c(34,39,25,13,46),]
+RAW_nondeclr <- RAW[-c(7,34,39,25,13,44,49,64),]
+```
+
+#Results
+
+<!-- This study followed of a pilot experiment, performed by Asvini Kulanayagam, a former student of Sleep & Neuroplasticity lab at Queen's University for her Honours Thesis. Although the majority of data used in the current study have been collected across two-years of my Master's studies, I have benefited from some of the results of the pilot experiment. All of the raw data of this study can be accessed at the [GitHub repository of this study](https://github.com/mohdasti/Queens-Thesis/tree/master/Raw%20data). -->
+
+##Descriptive statistics of the participants
+
+After applying the exclusion criteria, the behavioural performance of `r nrow(MED) + nrow(NAP) + nrow(WAKE)` participants was included in the formal analyses. The overall demographic characteristics of participants for each condition are shown in Table 1. \par
+
+<!-- https://github.com/mohdasti/Queens-Thesis
+\begin{table}[]
+\begin{tabular}{llccc}
+\multicolumn{5}{l}{Participant Demographic Characteristics by Experimental Conditions} \\ \hline
+                  &     & Nap                & Meditation         & Quiet rest         \\
+                  &     & (\textit{N} = `r nrow(MED)` )    & (\textit{N} = `r nrow(NAP)` )    & (\textit{N} = `r nrow(WAKE)` )    \\ \hline
+Age (in years)    &     &      `r round(mean(NAP$Age), digits =2)`(`r round(sd(NAP$Age), digits =2)`)              & `r round(mean(MED$Age), digits =2)`(`r round(sd(MED$Age), digits =2)`)                   &       `r round(mean(WAKE$Age), digits =2)`(`r round(sd(WAKE$Age), digits =2)`)             \\
+Male              &     &   `r round((nrow(subset(NAP, Gender == 'M'))/nrow(NAP))*100, digits = 2)`                 &   `r round((nrow(subset(MED, Gender == 'M'))/nrow(MED))*100, digits = 2)`                 &      `r round((nrow(subset(WAKE, Gender == 'M'))/nrow(WAKE))*100, digits = 2)`              \\
+Right-handed      &     &     `r round((nrow(subset(NAP, Handedness == 'R'))/nrow(NAP))*100, digits = 2)`               &         `r round((nrow(subset(MED, Handedness == 'R'))/nrow(MED))*100, digits = 2)`           &     `r round((nrow(subset(WAKE, Handedness == 'R'))/nrow(WAKE))*100, digits = 2)`               \\
+ESS - pre         &     &       `r round(mean(NAP$ESS_Pre), digits =2)`(`r round(sd(NAP$ESS_Pre), digits =2)`)             &   `r round(mean(MED$ESS_Pre), digits =2)`(`r round(sd(MED$ESS_Pre), digits =2)`)                 &     `r round(mean(WAKE$ESS_Pre), digits =2)`(`r round(sd(WAKE$ESS_Pre), digits =2)`)               \\
+ESS - post        &     &     `r round(mean(NAP$ESS_Post), digits =2)`(`r round(sd(NAP$ESS_Post), digits =2)`)               &   `r round(mean(MED$ESS_Post), digits =2)`(`r round(sd(MED$ESS_Post), digits =2)`)                 &     `r round(mean(WAKE$ESS_Post), digits =2)`(`r round(sd(WAKE$ESS_Post), digits =2)`)               \\
+FMI               &     &     `r round(mean(NAP$FMI, na.rm=TRUE), digits =2)`(`r round(sd(NAP$FMI, na.rm=TRUE), digits =2)`)               &      `r round(mean(MED$FMI, na.rm=TRUE), digits =2)`(`r round(sd(MED$FMI, na.rm=TRUE), digits =2)`)              &      `r round(mean(WAKE$FMI, na.rm=TRUE), digits =2)`(`r round(sd(WAKE$FMI, na.rm=TRUE), digits =2)`)              \\ \hline
+\multicolumn{5}{l}{\textit{Note.} ESS = Epworth Sleepiness Scale, FMI = Freiburg Mindfulness Inventory, \textit{Mean}(\textit{SD}) are reported for Age, ESS-pre, ESS-post, and FMI.
+Percentage is reported for Gender and Handedness. There were no statistically significant differences (\textit{p}<.05) on any of the demographic variables.}
+\end{tabular}
+\end{table}
+-->
+Table 1. *Participant demographic characteristics by experimental conditions*
+
+|                	|      	| Nap (*N* = 21) 	| Meditation (*N* = 25) 	| Quiet wake (*N* = 18) 	|
+|----------------	|:----:	|:--------------:	|:---------------------:	|:---------------------:	|
+  Age (in years) 	|      	|   21.2 (3.2)   	|      25.6 (10.4)      	|       21.5 (5.3)      	|
+  Male (%)      	|      	|       20       	|         47.62         	|          5.56         	|
+  Right-handed (%)|      	|       92       	|         85.71         	|         94.44         	|
+  ESS-pre        	|      	|  10.44 (2.72)  	|      7.67 (3.51)      	|      8.94 (3.92)      	|
+  ESS-post       	|      	|     9.48 (5.2) 	|      8.33 (4.29)  	    |     11.56 (5.63)      	|
+  FMI            	|      	|     38.53 (6.2)	|      41.27 (5.96)     	|      40.73 (6.59)     	|
+
+*Note.*  ESS = Epworth Sleepiness Scale, FMI = Freiburg Mindfulness Inventory. *Mean* and *SD* are reported for Age, ESS-pre, ESS-post, and FMI. Percentage of participants in each condition is reported for Gender and Handedness.
+\par
+
+## Sleep profiles of participants
+
+Additionally, Table 2. illustrates the sleep parameters of the participants in the nap condition. *Mean* and *Standard Deviation* values are reported in minutes. \par
+
+Table 2. *Sleep profile (in minutes) of individuals in the nap experimental condition (Mean and SD are reported)*
+
+| Parameters         	|   	|    |    |    |  *M* (*SD*)   	|
+|--------------------	|---	|--- |--- |--- |:-------------:	|
+| Sleep latency      	|   	|    |    |    | 11.69 (9.09) 	|
+| Stage 1            	|   	|    |    |    | 11.43 (10.07) 	|
+| Stage 2            	|   	|    |    |    | 13.81 (12.62) 	|
+| Stage SWS          	|   	|    |    |    | 14.37 (16.9) 	|
+| REM sleep           |     |    |    |    | 0 (0)          |
+| Total sleep time   	|   	|    |    |    | 39.62 (19.01) 	|
+| Number of arousals 	|   	|    |    |    |  4.2 (3.82)  	|
+
+
+Table 2. summarizes the sleep parameters of the participants in the nap condition. The mean total sleep time was about 40 minutes (out of the 60 minutes sleep opportunity). Of the 40 min, approximately 33% was spent in Stage 1 sleep, 36% in Stage 2 sleep, and 30% was spent in SWS (Stages 3 and 4). Out of 21 nappers, 10 individuals experienced SWS, which ranged from 13 to 53 minutes.
+
+## Comparison of ESS scores across conditions
+```{r, include= FALSE, cache= TRUE}
+RAW$ESS_diff <- (RAW$ESS_Post)-(RAW$ESS_Pre) 
+summary(aov(ESS_diff ~ Condition, data = RAW))
+results <- analyze(aov(ESS_diff ~ Condition, data = RAW))
+print(results)
+
+TukeyHSD(aov(ESS_diff ~ Condition, data = RAW))
+```
+
+To compare the effect of each condition on the level of fatigue, I ran a one-way ANOVA (assumptions of normality, homogeneity of variances, and outliers were met). The effect of Condition was significant (*F*(2, 61) = 3.73, *p* < .05) and can be considered as medium (Partial Omega-squared = 0.080). Post hoc comparisons using the Tukey's Honest Significant Difference test revealed a significant difference in the wake and napping conditions (*p* < .05). Thus, I ran additional correlational analysis of ESS scores on the napping condition exclusively.
+
+### Correlational analysis of ESS scores and the duration of sleep stages
+```{r, include= FALSE, cache= TRUE}
+NAP$ESS_diff <- NAP$ESS_Post-NAP$ESS_Pre
+bayes_cor.test(NAP$ESS_diff, NAP$total.sleep.time)
+```
+
+To explore the relationship between the ESS scores and the duration of sleep stages, a series of Bayesian correlation tests were performed. To interpret the Bayesian Factor (BF) values, I used Jeffrey's evidence categories [@jeffreys1961theory].
+First, I assessed the correlation between the difference in ESS scores and total sleep time across all participants in the napping condition. Our tests showed anecdotal evidence (BF = 1.39) in favour of the alternative hypothesis (H<sub>1</sub>) (true correlation is not equal to zero). In other words, our data are 1.39 times more likely to have occured under the alternative hypothesis than under null hypothesis (r = -0.19, MAD = 0.18, 90% CI [-0.49, 0.11]). This correlation can be considered as large, moderate, small or very small with the respective probabilities of 3.79%, 22.43%, 41.66% and 16.34%. \par
+After dividing the nappers into non-SWS and SWS groups, I repeated the correlation test.
+
+  - **non-SWS**: For those who did not enter SWS, the results suggested anecdotal evidence (BF = 1.27) in favour of the presence of any associations between the difference in ESS scores and total sleep time (non-SWS). Thus, our data are 1.27 times more likely to have occured under the assumption that the true correlatoin is not equal to zero (r = -0.18, MAD = 0.25, 90% CI [-0.58, 0.25]). This correlation can be considered as large, moderate, small or very small with the respective probabilities of 9.55%, 22.07%, 30.05% and 14.24%.
+  - **SWS**: For participants who entered SWS, the anecdotal evidence (BF = 1.18) showed that there is a negative association between the difference in ESS scores and total sleep time (SWS) (r = -0.29, MAD = 0.23, 90% CI [-0.65, 0.092]). The correlation can be considered as large, moderate, small or very small with the respective probabilities of 16.04%, 31.89%, 31.05% and 10.08%. Therefore, our data suggested that longer sleep is related to a greater decline in ESS scores, indicative of a more effective reduction in fatigue with longer sleep.
+
+
+\newpage
+
+##Declarative memory
+
+Table 3. illustrates the summary of overall behavioural performance on the paired associates task, prior to geometric mean calculation. Values are averaged across all participants within each condition. As described earlier, geometric mean was chosen to capture their overall of performance in the declarative memory tasks.
+
+Table3. *Breakdown of the behavioural performance of individuals in each experimental condition. Their responses were divided into four categories of Hit (True Positive), Miss (False Negative), False alarm (False Positive), and Correct rejection (True Negative). Arithmetic Mean is reported here.*
+
+|      	|  Hit  	| Miss 	| False Alarm 	| Correct Rejection 	|
+|:----:	|:-----:	|:----:	|:-----------:	|:-----------------:	|
+| MED  	| 13.84 	| 6.16 	|     6.20    	|       33.80       	|
+| NAP  	| 16.76 	| 3.24 	|     9.47    	|       30.52       	|
+| WAKE 	| 13.11 	| 6.89 	|     8.77    	|       31.23       	|
+
+
+Additionally, the overall distribution of behavioural performance scores on the paired associates task is shown in figure \ref{decldist}.
+\par
+
+
+``` {r, include = FALSE, cache=TRUE}
+#overall pattern of distribution
+NAP_GMean <-
+  data.frame(Condition = "NAP", GeometricMean = c(RAW_declr$GMean[RAW_declr$Condition == 'NAP']))
+MED_GMean <-
+  data.frame(Condition = "MED", GeometricMean = c(RAW_declr$GMean[RAW_declr$Condition == 'MED']))
+WAKE_GMean <-
+  data.frame(Condition = "WAKE", GeometricMean = c(RAW_declr$GMean[RAW_declr$Condition == 'WAKE']))
+df_GMean <- rbind(NAP_GMean, MED_GMean, WAKE_GMean)
+```
+
+
+``` {r, echo = FALSE, cache=TRUE, fig.cap = "Overall distribution of Geometric Mean scores across the three experimental conditions (NAP; MED, meditation; WAKE).  Error bars reflect standard deviation. \\label{decldist}"}
+ggplot(df_GMean, aes(x = Condition, y = GeometricMean, color = Condition)) +
+  geom_point(size = 4,
+             alpha = 0.7,
+             position = position_jitter(w = 0.1, h = 0)) +
+  stat_summary(
+    fun.y = mean,
+    geom = "point",
+    shape = 23,
+    color = "black",
+    aes(fill = Condition),
+    size = 4
+  ) +
+  stat_summary(
+    fun.ymin = function(x)
+      (mean(x) - sd(x)
+      ),
+    fun.ymax=function(x)(mean(x)+sd(x)),
+    geom="errorbar", width=0.1) +
+    theme_apa()
+```
+
+```{r, include=FALSE, cache=TRUE}
+#Compare across all treatment conditions
+fit_GMean <- rstanarm::stan_glm(GMean ~ Condition, data=RAW_declr)
+fit.mean <- as.matrix(fit_GMean)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_GMean)
+summary(results, round = 2)
+print(results)
+
+contrasts <- psycho::get_contrasts(fit_GMean, "Condition")
+means <- psycho::get_means(fit_GMean, "Condition")
+```
+
+\par
+  To test whether a nap or meditation alters declarative memory consolidation when compared to the wake (movie) condition, I fitted a Bayesian generalized linear model to compare the effects of experimental conditions (meditation, sleep, wake) on the performance of participants in the paired-associates task using G-Mean. As hypothesized, participants in the meditation group outperformed the wakefulness group in recalling word pairs learned prior to the experimental manipulation. In contrast, the difference in performance between the napping and meditation group was not conclusive of a reliable difference between these conditions (see figure \ref{declbayes}). 
+ 
+  For this statistical model, the intercept (meditation condition) was at 0.80 (MAD = 0.028, 90% CI [0.75, 0.84]). Compared to the meditation group, there was a probability of 69.80% that napping led to a decrease in word recall, as measured by G-Mean (Median = -0.019, MAD = 0.037, 90% CI [-0.081, 0.039], Overlap = 79.45%). In addition, compared with the intercept (meditation condition), there was a probability of 97.42% that wakefulness condition led to a decrease of G-Mean (Median = -0.073, MAD = 0.038, 90% CI [-0.14, -0.014], Overlap = 34.95%). The model's priors were set as follows: ~ normal (location = (0, 0), scale = (0.28, 0.28)) and had an explanatory power (R^2^) of about 8.81% (MAD = 0.063, 90% CI [0.0039, 0.19], adj. R^2^ = -0.022). 
+
+```{r, echo=FALSE, cache=TRUE, fig.cap = "Comparsion of G-Mean values across all conditions. Error bars reflect 90% credible intervals. \\label{declbayes}"}
+ggplot(means, aes(x=Level, y=Median, group=1)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("G-Mean") +
+  xlab("Condition") +
+  theme_apa()
+```
+
+\par
+
+### Exploring the effect of SWS
+
+  Additionally, I investigated the potential influence of different sleep stages (SWS or non-SWS) on the consolidation of declarative memory. Although the presence of SWS was associated with a slight increase in the performance on the declarative memory task, the difference was not conclusive of a significant sleep stage effect (see figure \ref{declbayesSWSnonSWS}).
+
+  Within this model, the intercept (SWS absent) was at 0.78 (MAD = 0.037, 90% CI [0.72, 0.84]). Compared with that, there was a probability of 60.77% that SWS led to an increase of G-Mean (Median = 0.015, MAD = 0.054, 90% CI [-0.074, 0.11], Overlap = 89.23%). The model's priors were set as follows: ~ normal (location = (0), scale = (0.32)) and had an explanatory power (R^2^) of about 2.16% (MAD = 0.029, 90% CI [0, 0.11]). 
+
+
+```{r, include=FALSE, cache=TRUE}
+#for nappers - comparing the GMean for sws and non-sws
+RAW_declr$SWS[RAW_declr$percentSWS == 0] <- "Absent"
+RAW_declr$SWS[RAW_declr$percentSWS != 0] <- "Present"
+
+RAW_NAP <- RAW_declr[1:23,]
+fit_GMean_NAP <- rstanarm::stan_glm(GMean ~ SWS , data=RAW_NAP)
+fit.mean <- as.matrix(fit_GMean_NAP)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_GMean_NAP)
+summary(results, round = 2)
+print(results)
+
+contrasts <- psycho::get_contrasts(fit_GMean_NAP, "SWS")
+means <- psycho::get_means(fit_GMean_NAP, "SWS")
+```
+
+```{r, echo= FALSE, fig.cap = "Comparsion of G-Mean values across nappers who entered SWS and those who remained in stages 1 and 2 of sleep. Error bars reflect 90% credible intervals. \\label{declbayesSWSnonSWS}"}
+
+#plotting the sws vs. nonsws performace in the declarative memory
+ggplot(means, aes(x=Level, y=Median, group=1)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("G-Mean") +
+  xlab("SWS type") +
+  theme_apa()
+```
+
+\newpage
+
+##Non-declarative memory
+
+``` {r, include=FALSE, cache=TRUE}
+#importing thier separate dataset - we are performing a repated-measures task
+nonSWS_repeated <- rio::import("https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Repeated%20measures/nonSWS_repeated.xlsx?raw=true",na = "N/A")
+
+nonSWS_repeated <- nonSWS_repeated[-c(19,20,57,58,87,88),]
+
+SWS_repeated_measures <- rio::import("https://github.com/mohdasti/Queens-Thesis/blob/master/Raw%20data/Repeated%20measures/SWS_repeated.xlsx?raw=true", 
+                                     na = "N/A")
+SWS_repeated <- SWS_repeated_measures[-c(11,12,65,66,95,96),]
+```
+
+Figure \ref{acquisition} shows the acquisitioc curve of learning  of the procedural memory task for all experimental conditions. Individuals in all groups showed degrees of improvement with training (trials 1 to 100). In the highlighted area (retention intervals) of \autoref{acquisition}, participants in the meditation condition maintained a relative stable scores (trials 101 to 150), whereas participants in the napping condition showed an inconsistent trend in their retention interval. Lastly, participants in the wake condition showed improvements; however, their overall scores were below the other experimental conditions.
+```{r, echo= FALSE, fig.cap = "The acquisition curve of learning of the procedural memory task across all experimental conditions. Highlighted areas show the retention trials. \\label{acquistion}"}
+# acquisition curve with all three conditions
+Trials <- as.character(Acquisition_curve_overall$Trials)
+Trials <- factor(Acquisition_curve_overall$Trials, levels = c("1-10", "11-20","21-30","31-40","41-50","51-60","61-70","71-80","81-90","91-100","101-110","111-120","121-130","131-140","141-150"))
+rect <- data.frame(xmin="101-110", xmax="141-150", ymin=-Inf, ymax=Inf)
+ggplot(Acquisition_curve_overall, aes(x=Trials, y=Sum_Scores, group=Condition)) +
+  geom_line(aes(color=Condition))+
+  geom_point(aes(color=Condition))+
+  expand_limits(x=0, y=0) +
+  geom_rect(data=rect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax),
+            color="transparent",
+            fill = "orange",
+            alpha=0.3,
+            inherit.aes = FALSE)
+```
+
+\par
+
+The overall distribution of behavioural performance on the Marble Maze task is shown in figure \ref{nondeclarativelist}. As shown, there were no significant difference in performance among the three experimental conditions.
+\par
+
+``` {r, echo= FALSE, fig.cap = "Overall distribution of difference of median scores, obtained by subtracting the median of first ten trials of post-intervention from last ten trials of pre-intervention, across all experimental conditions (NAP; MED, meditation; WAKE). Error bars reflect standard deviation. \\label{nondeclarativelist}"}
+
+# overall pattern of distribution - nothing significant
+ggplot(RAW_nondeclr,
+       aes(
+         x = Condition,
+         y = Median.Diff,
+         color = Condition,
+         label = Code
+       )) +
+  geom_point(size = 4,
+             alpha = 0.7,
+             position = position_jitter(w = 0.1, h = 0)) +
+  stat_summary(
+    fun.y = mean,
+    geom = "point",
+    shape = 23,
+    color = "black",
+    aes(fill = Condition),
+    size = 4
+  ) +
+  stat_summary(
+    fun.ymin = function(x)
+      (mean(x) - sd(x)
+      ),
+    fun.ymax=function(x)(mean(x)+sd(x)),
+    geom="errorbar", width=0.1) +
+    theme_apa()
+```
+
+\par
+
+  As was mentioned earlier, several studies have found that SWS can exert adverse effects on performance in procedural memory tasks [@tassi2000sleep; @hilditch2017review]. Therefore, we separated participants in the NAP condition into those who entered SWS and those who did not. As shown in \ref{nondeclarativeSWSnap}, performance in these two groups of participants are noticably different.
+```{r, echo= FALSE, fig.cap = "Overall distribution of difference of median scores of nappers, obtained by subtracting the median of first ten trials of post-intervention from last ten trials of pre-intervention. Participants are separated on the basis of SWS exhibition. Error bars reflect standard deviation. \\label{nondeclarativeSWSnap}"}
+
+# overall pattern of distribution of nappers, separated into SWS and non-SWS
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS == 0] <- "Absent"
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS != 0] <- "Present"
+RAW_NAP_nondecl <- RAW_nondeclr[1:22,]
+ggplot(RAW_NAP_nondecl,
+       aes(
+         x = SWS,
+         y = Median.Diff,
+         color = SWS,
+         label = Code
+       )) +
+  geom_point(size = 4,
+             alpha = 0.7,
+             position = position_jitter(w = 0.1, h = 0)) +
+  stat_summary(
+    fun.y = mean,
+    geom = "point",
+    shape = 23,
+    color = "black",
+    aes(fill = SWS),
+    size = 4
+  ) +
+  stat_summary(
+    fun.ymin = function(x)
+      (mean(x) - sd(x)
+      ),
+    fun.ymax=function(x)(mean(x)+sd(x)),
+    geom="errorbar", width=0.1) +
+    theme_apa()
+```
+  
+  
+Subsequently, we plotted the overall distribution of their performance scores of all nappers (divided into those with and without SWS in relation to their total sleep time, as well as the performance in relation to the proportion of SWS as a percent of total sleep time (see figure \ref{nondecldistSWSnonSWS}.)
+\par
+```{r, echo= FALSE, fig.cap = "The overall distribution of performance on the procedural memory task in nappers who entered SWS and those who remained in stages 1 and 2 for the entire experiment. Total sleep time shows the amount of time participants spent in the experiment room. \\label{nondecldistSWSnonSWS}"}
+# plot of SWS percent and the time of sleep
+RAW_nondeclr <- RAW[-c(4,7,34,39,25,13,44,49,64),]
+
+RAW_nondeclr$percentSWS <- 100*RAW_nondeclr$percentSWS #to make them look like percent!
+RAW_nondeclr$percentSWS <- ceiling(RAW_nondeclr$percentSWS) #keeping the integers only
+RAW_nondeclr$total.sleep.time <- RAW_nondeclr$total.sleep.time/60 #converting them to minutes
+RAW_nondeclr$total.sleep.time <- ceiling(RAW_nondeclr$total.sleep.time) #keeping the integers only
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS == 0] <- "SWS Absent"
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS != 0] <- "SWS Present"
+NAP.performance.nosws <- filter(RAW_nondeclr, percentSWS == 0)
+NAP.performance.sws <-  filter(RAW_nondeclr, percentSWS != 0)
+df2.median <-rbind(NAP.performance.nosws, NAP.performance.sws)
+ggplot(df2.median, aes(x = total.sleep.time, y=Median.Diff, colour = SWS )) + geom_point(aes(size = percentSWS)) + geom_hline(yintercept=0, linetype="dashed", color = "blue") + geom_smooth(method = lm, se= FALSE, fullrange=TRUE) + theme_apa()
+```
+
+\par
+
+
+### Nappers in the non-SWS
+
+  As shown in figure \ref{nondecldistSWSnonSWS}, the pronounced difference between the performance of participants who did and did not enter SWS during their nap required further, separate analyses for the two subsets of participants in the napping condition. 
+  
+  Hence, by fiiting a Bayesian generalized linear mixed model, I compared the overall performance of nappers, separated into SWS and non SWS, in the non-declarative memory task using median values (see figure \ref{declbayesSWSnonSWS}). As figure \ref{declbayesSWSnonSWS} shows, nappers who went into SWS performed significantly worse than those who did not enter SWS. 
+Within this model, the intercept (SWS absent) was at 1.33 (MAD = 0.51, 90% CI [0.44, 2.22]). Compared with it, there was a probability of 96.23% that presence of SWS led to a decrease of the difference of median values (Median = -1.25, MAD = 0.67, 90% CI [-2.40, -0.096], Overlap = 37.52%).  The model's priors were set as follows: ~ normal (location = (0), scale = (4.14)) and had an explanatory power (R^2^) of about 14.89% (MAD = 0.13, 90% CI [0, 0.32], adj. R^2^ = -0.032).
+\par
+  
+```{r, include=FALSE, cache=TRUE}
+#for nappers - comparing the GMean for sws and non-sws
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS == 0] <- "Absent"
+RAW_nondeclr$SWS[RAW_nondeclr$percentSWS != 0] <- "Present"
+
+RAW_NAP_nondecl <- RAW_nondeclr[1:21,]
+fit_MedDiff_NAP <- rstanarm::stan_glm(Median.Diff ~ SWS , data=RAW_NAP_nondecl)
+fit.mean <- as.matrix(fit_MedDiff_NAP)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_MedDiff_NAP)
+summary(results, round = 2)
+print(results)
+
+contrasts <- psycho::get_contrasts(fit_MedDiff_NAP, "SWS")
+means <- psycho::get_means(fit_MedDiff_NAP, "SWS")
+```
+
+```{r, echo= FALSE, fig.cap = "Comparsion of G-Mean values across nappers who entered SWS and those who remained in stages 1 and 2 of sleep. Error bars reflect 90% credible intervals. \\label{declbayesSWSnonSWS}"}
+
+#plotting the sws vs. nonsws performace in the declarative memory
+ggplot(means, aes(x=Level, y=Median, group=1)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("Difference of Medians") +
+  xlab("SWS type") +
+  theme_apa()
+```
+
+
+```{r, include=FALSE, cache=TRUE}
+#creating four omnibus conditions
+RAW_nondeclr$Conditions[RAW_nondeclr$percentSWS == 0] <- "SWS Absent"
+RAW_nondeclr$Conditions[RAW_nondeclr$percentSWS != 0] <- "SWS Present"
+RAW_nondeclr$Conditions[RAW_nondeclr$Condition == 'MED'] <- "MED"
+RAW_nondeclr$Conditions[RAW_nondeclr$Condition == 'WAKE'] <- "WAKE"
+
+fit_MedDiff_all <- rstanarm::stan_glm(Median.Diff ~ Conditions , data=RAW_nondeclr)
+fit.mean <- as.matrix(fit_MedDiff_all)[,1:4]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+fit.mean[,4] <- fit.mean[,1] + fit.mean[,4]
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Detailed_Conditions = c('Meditation', 'SWS Absent', 'SWS Present', 'Wake')
+
+results <- psycho::analyze(fit_MedDiff_all)
+summary(results, round = 2)
+print(results)
+
+contrasts <- psycho::get_contrasts(fit_MedDiff_all, "Conditions")
+means <- psycho::get_means(fit_MedDiff_all, "Conditions")
+```
+
+```{r, echo= FALSE, fig.cap = "Comparsion of G-Mean values across nappers who entered SWS and those who remained in stages 1 and 2 of sleep. Error bars reflect 90% credible intervals. \\label{declbayesSWSnonSWS}"}
+
+#plotting omnibus test or nondeclarative task
+ggplot(means, aes(x=Level, y=Median, group=1)) +
+  geom_pointrange(aes(ymin=CI_lower, ymax=CI_higher)) +
+  ylab("Difference of Medians") +
+  xlab("Condition") +
+  theme_apa()
+```
+
+
+
+```{r, include=FALSE, cache=TRUE}
+#Compare across all treatment conditions
+
+#with nonSWS nappers
+fit_Bayes_RM_nonSWS <- rstanarm::stan_lmer(MedianScores ~ Condition + (1|Code), data=nonSWS_repeated)
+
+fit.mean <- as.matrix(fit_Bayes_RM_nonSWS)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_Bayes_RM_nonSWS)
+summary(results, round = 2)
+print(results)
+```
+To predict whether stage 1 and 2 of sleep or meditation affects non-declarative memory consolidation, I fitted a Bayesian generalized linear mixed model to compare the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in the Marble Maze task using median values. As hypothesized, participants in the meditation group outperformed the wakefulness group in recalling words. The difference between the performance of napping and meditation conditions, however, were not conclusive of the existence of meditation effect (see figure \ref{nondeclbayesnonSWS}). 
+
+  Within this model, the intercept (meditation condition) was at 5.49 (MAD = 0.53, 90% CI [4.63, 6.41]). Compared with it, there was a probability of 88.40% that napping condition led to a decrease of median of scores (Median = -1.14, MAD = 0.93, 90% CI [-2.65, 0.44], Overlap = 55.55%). Also, there was a probability of 94.77% that wakefulness condition led to a decrease of median of scores (Median = -1.25, MAD = 0.79, 90% CI [-2.47, 0.096], Overlap = 42.94%). The model's priors were set as follows: ~ normal (location = (0, 0), scale = (6.42, 6.42)) and had an explanatory power (R^2^) of about 60.54% (MAD = 0.075, 90% CI [0.48, 0.72], adj. R^2^ = 0.39)
+
+
+```{r, echo=FALSE, fig.cap = "Comparsion of median values values of nappers who remained in stages 1 and 2 of sleep across all conditions. Error bars reflect 90% credible intervals. \\label{nondeclbayesnonSWS}"}
+ggplot(fit.pf, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+  ylab("Median of Scores - non SWS") +
+  xlab("Condition") +
+  theme_apa()
+```
+
+\par
+
+### nappers in the SWS condition
+
+  To predict whether SWS or meditation affects non-declarative memory consolidation, I fitted a Bayesian generalized linear mixed model, to compare the effects of experimental conditions (meditation, sleep, quiet wake) on the performance of participants in the Marble Maze task using median values. Interestingly, participants in the meditation condition outperformed both nappers who experienced SWS and participants who stayed awake (see Figure \ref{nondeclbayesSWS}).
+
+  Within this model, the intercept (meditation condition) was at 5.52 (MAD = 0.53, 90% CI [4.62, 6.32]). Compared with it, there was a probability of 95.67% that SWS led to decrease of the median of scores in the wakefulness condition (Median = -1.30, MAD = 0.76, 90% CI [-2.53, -0.10], Overlap = 40.14%). Additionally, there was a probability of 91.53% that SWS led to decrease of the median of scores in the nap condition (Median = -1.15, MAD = 0.83, 90% CI [-2.50, 0.14], Overlap = 48.98%). The model's priors were set as follows: ~ normal (location = (0, 0), scale = (6.19, 6.19)) and had an explanatory power (R^2^) of about 65.57% (MAD = 0.061, 90% CI [0.55, 0.75], adj. R^2^ = 0.45). 
+  
+```{r, include=FALSE, cache=TRUE}
+fit_Bayes_RM_SWS <- rstanarm::stan_lmer(MedianScores ~ Condition + (1|Code), data=SWS_repeated)
+
+fit.mean <- as.matrix(fit_Bayes_RM_SWS)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_Bayes_RM_SWS)
+summary(results, round = 2)
+print(results)
+```
+
+```{r, echo= FALSE, cache=TRUE, fig.cap = "Comparsion of median values values of nappers who entered SWS across all conditions. Error bars reflect 90% credible intervals. \\label{nondeclbayesSWS}"}
+ggplot(fit.pf, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+  ylab("Median of Scores - SWS") +
+  xlab("Condition") +
+  theme_apa()
+```
+
+\newpage
+
+##Exploratory analyses
+
+### The role of gender on declarative memory
+```{r, include= FALSE, cache=TRUE}
+### role of gender on the DECLARATIVE memory
+
+RAW_declr$Binary_gender <- ifelse(RAW_declr$Gender == 'M', 1, 0) #create dummy variable for gender
+
+fit_GMean_gender <- rstanarm::stan_glm(Binary_gender ~ GMean, data=RAW_declr, family = "binomial")
+
+results <- psycho::analyze(fit_GMean_gender)
+summary(results, round = 2)
+print(results)
+
+# Generate a new refgrid
+refgrid <- RAW_declr %>% 
+  dplyr::select(GMean) %>% 
+  psycho::refdata(length.out=10)
+
+# Get predictions and keep iterations
+predicted_GMean <- psycho::get_predicted(fit_GMean_gender, newdata=refgrid, keep_iterations=TRUE)
+
+# Reshape this dataframe to have iterations as factor
+predicted_GMean <- predicted_GMean %>% 
+  tidyr::gather(Iteration, Iteration_Value, starts_with("iter"))
+
+```
+To predict whether gender affects the performance on the declarative memory tasks, I fitted a Markov Chain Monte Carlo binomial (link = logit) model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)`. Our data suggested that higher scores in G-Mean predicts higher probability of being a female (see figure \ref{explGMeanMale}).
+
+  Within this model,`(formula = Binary_gender ~ GMean)`, the intercept (the probability of being a man) was at 2.21 (MAD = 2.20, 90% CI [-1.32, 5.69]). Compared with it, there was a probability of 94.60% led to a decrease of G-Mean values (Median = -4.42, MAD = 2.88, 90% CI [-8.91, 0.26], Overlap = 44.63%).  
+The model's priors were set as follows: ~ normal (location = (0), scale = (21.63)) and had an explanatory power (R^2^) of about 4.13% (MAD = 0.046, 90% CI [0, 0.12]). The intercept is at 2.21 (MAD = 2.20, 90% CI [-1.32, 5.69]).
+
+```{r, echo= FALSE, cache=TRUE, fig.cap = "Plot of all iterations with the median prediction of the probability of being a man on the overall G-Mean values. \\label{explGMeanMale}"}
+# Plot all iterations with the median prediction
+ggplot(predicted_GMean, aes(x=GMean)) +
+  geom_line(aes(y=Iteration_Value, group=Iteration), size=0.3, alpha=0.01) +
+  geom_line(aes(y=Binary_gender_Median), size=1) + 
+  ylab("Probability of Being a Man\n") +
+  theme_apa()
+```
+
+
+### The role of gender on non-declarative memory
+
+```{r, include= FALSE, cache=TRUE}
+### role of gender on the NON-DECLARATIVE memory
+
+RAW_nondeclr$Binary_gender <- ifelse(RAW_nondeclr$Gender == 'M', 1, 0) #create dummy variable for gender
+
+fit_Maze_gender <- rstanarm::stan_glm(Binary_gender ~ Median.Diff, data=RAW_nondeclr, family = "binomial")
+
+results <- psycho::analyze(fit_Maze_gender)
+summary(results, round = 2)
+print(results)
+
+# Generate a new refgrid
+refgrid <- RAW_nondeclr %>% 
+  dplyr::select(Median.Diff) %>% 
+  psycho::refdata(length.out=10)
+
+# Get predictions and keep iterations
+predicted_Maze <- psycho::get_predicted(fit_Maze_gender, newdata=refgrid, keep_iterations=TRUE)
+
+# Reshape this dataframe to have iterations as factor
+predicted_Maze <- predicted_Maze %>% 
+  tidyr::gather(Iteration, Iteration_Value, starts_with("iter"))
+
+```
+For the non-declarative memory, I was interested to predict whether gender affects the performance on the Marble Maze task. Therefore, I fitted a Markov Chain Monte Carlo binomial (link = logit) model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)`. Our data suggested that higher  scores in the difference of medians predicts higher probability of being a male (see figure \ref{explMazeMale}). 
+
+Within this model,`(formula = Binary_gender ~ Median.Diff)`, the intercept (the probability of being a man) was at -1.33 (MAD = 0.37, 90% CI [-1.89, -0.72]). Compared with that, there was a probability of 93.40% that being a male led to increase of the difference of medians (Median = 0.28, MAD = 0.19, 90% CI [-0.028, 0.61], Overlap = 46.61%). The model's priors were set as follows: ~ normal (location = (0), scale = (1.53)) and had had an explanatory power (R^2^) of about 4.56% (MAD = 0.053, 90% CI [0, 0.13]). The intercept is at -1.33 (MAD = 0.37, 90% CI [-1.89, -0.72]).
+
+
+
+```{r, echo= FALSE, cache=TRUE, fig.cap = "Plot of all iterations with the median prediction of the probability of being a man on the overall Difference of Median values. \\label{explMazeMale}"}
+# Plot all iterations with the median prediction
+ggplot(predicted_Maze, aes(x=Median.Diff)) +
+  geom_line(aes(y=Iteration_Value, group=Iteration), size=0.3, alpha=0.01) +
+  geom_line(aes(y=Binary_gender_Median), size=1) + 
+  ylab("Probability of Being a Man\n") +
+  theme_apa()
+```
+
+\par
+
+Finally, I looked at the interaction of gender with their performance on the Maze task, subsetting nappers into SWS and non-SWS participants. Our analysis suggested that only the effect of being male was probable (Median = 0.73, MAD = 0.28, 90% CI [0.28, 1.19], Overlap = 19.60%, MPE =  99.50%). Similarly, for SWS, only the effect of being male was probable (Median = 2.09, MAD = 0.65, 90% CI [1.07, 3.17], Overlap = 11.23%, MPE = 99.95%). The full model is presented on Appendix M.
+<!--
+```{r, include= FALSE, cache=TRUE}
+# modeling the effect of gender
+#non SWS
+fit_Bayes_RM_nonSWS_gender <- rstanarm::stan_lmer(scale(MedianScores) ~ Condition * Gender + (1|Code), data=nonSWS_repeated, cores = 4, prior = normal(0,.5))
+fit.mean <- as.matrix(fit_Bayes_RM_nonSWS_gender)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_Bayes_RM_nonSWS_gender)
+summary(results, round = 2)
+print(results)
+```
+#### The interaction of gender - nonSWS
+As figure
+
+I fitted a Markov Chain Monte Carlo gaussian (link = identity) model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict Median Scores `(formula = scale(MedianScores) ~ Condition * Gender + (1 | Code))`. The model's priors were set as follows: ~ normal (location = (0, 0, 0, 0, 0), scale = (0.50, 0.50, 0.50, 0.50, 0.50))
+
+
+The model has an explanatory power (R^2^) of about 60.06% (MAD = 0.077, 90% CI [0.47, 0.72], adj. R^2^ = 0.24). The intercept is at -0.086 (MAD = 0.20, 90% CI [-0.40, 0.24]). Within this model:
+
+  - The effect of stage 1 and 2 sleep has a probability of 74.98% of being negative (Median = -0.19, MAD = 0.28, 90% CI [-0.65, 0.28], Overlap = 74.61%).
+  - The effect of quiet wake has a probability of 70.28% of being negative (Median = -0.13, MAD = 0.25, 90% CI [-0.54, 0.28], Overlap = 78.90%).
+  - The effect of being Male has a probability of 99.50% of being positive (Median = 0.73, MAD = 0.28, 90% CI [0.28, 1.19], Overlap = 19.60%).
+  - The interaction between nap and being male has a probability of 53.97% of being negative (Median = -0.039, MAD = 0.41, 90% CI [-0.65, 0.67], Overlap = 96.14%).
+  - The interaction between quiet wake and being male has a probability of 78% of being negative (Median = -0.33, MAD = 0.43, 90% CI [-1.07, 0.37], Overlap = 71.10%).
+  
+See figure \ref{explintMazeMale}.
+
+```{r, echo= FALSE, cache=TRUE, fig.cap = "The interaction of being male on the performance on the Maze task for nappers in the stage 1 and 2, meditators, and participants in the quiet wake condition. Error bars reflect 90% credible intervals. \\label{explintMazeMale}"}
+ggplot(fit.pf, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+  ylab("Median of Scores - non SWS") +
+  xlab("Condition") +
+  theme_apa()
+```
+
+\par
+
+#### The interaction of gender - SWS
+
+```{r, include= FALSE, cache=TRUE}
+#SWS
+fit_Bayes_RM_SWS_gender <- rstanarm::stan_lmer(MedianScores ~ Condition * Gender + (1|Code), data=SWS_repeated, cores = 4, prior = normal(0,.5))
+fit.mean <- as.matrix(fit_Bayes_RM_SWS_gender)[,1:3]
+fit.mean[,2] <- fit.mean[,1] + fit.mean[,2]
+fit.mean[,3] <- fit.mean[,1] + fit.mean[,3]
+
+
+fit.pf <- cbind(colMeans(fit.mean), 
+                posterior_interval(fit.mean))
+fit.pf <- as.data.frame(fit.pf)
+fit.pf <- fit.pf
+names(fit.pf) <- c('Mean', 'Lower', 'Upper')
+fit.pf$Condition = c('Meditation', 'Nap', 'Wake')
+
+results <- psycho::analyze(fit_Bayes_RM_SWS_gender)
+summary(results, round = 2)
+print(results)
+
+```
+
+I fitted a Markov Chain Monte Carlo gaussian (link = identity) model `(4 chains, each with iter = 2000; warmup = 1000; thin = 1; post-warmup = 1000)` to predict MedianScores `(formula = scale(MedianScores) ~ Condition * Gender + (1 | Code))`. The model's priors were set as follows: ~ normal (location = (0, 0, 0, 0, 0), scale = (1.24, 1.24, 1.24, 1.24, 1.24)).
+
+
+
+
+The model has an explanatory power (R^2^) of about 65.02% (MAD = 0.062, 90% CI [0.54, 0.75], adj. R^2^ = 0.47). The intercept is at 4.48 (MAD = 0.48, 90% CI [3.69, 5.25]). Within this model:
+
+  - The effect of SWS has a probability of 81.85% of being negative (Median = -0.60, MAD = 0.67, 90% CI [-1.59, 0.46], Overlap = 65.33%).
+  - The effect of quiet wake has a probability of 67.22% of being negative (Median = -0.27, MAD = 0.60, 90% CI [-1.20, 0.77], Overlap = 82.26%).
+  - The effect of being male has a probability of 99.95% of being positive (Median = 2.09, MAD = 0.65, 90% CI [1.07, 3.17], Overlap = 11.23%).
+  - The interaction between SWS and being male has a probability of 67.33% of being positive (Median = 0.42, MAD = 0.91, 90% CI [-1.06, 1.96], Overlap = 82.32%).
+  - The interaction between quiet wake and being male has a probability of 81.08% of being negative (Median = -0.96, MAD = 1.08, 90% CI [-2.74, 0.76], Overlap = 66.27%).
+  
+See figure \ref{explintMazeMaleSWS}.
+
+```{r, echo= FALSE, cache=TRUE, fig.cap = "The interaction of being male on the performance on the Maze task for nappers in the SWS, meditators, and participants in the quiet wake condition. Error bars reflect 90% credible intervals. \\label{explintMazeMaleSWS}"}
+ggplot(fit.pf, aes(x=Condition, y=Mean, group=1)) +
+  geom_line() +
+  geom_pointrange(aes(ymin = Lower, ymax = Upper)) +
+  ylab("Median of Scores - SWS") +
+  xlab("Condition") +
+  theme_apa()
+```
+-->
+\par
+
+### Correlation of brain oscillations
+
+The overall correlation matrix of meditative states and behavioural performance, as well as months of practice and the level of mindfulness (FMI) is shown in \autoref{corrosc}. Our analysis suggested that there was an anecdotal association between the FMI values and duration of meditative state and there was a moderate association between the FMI values and the behavioural performance on non-declarative memory task. \par
+
+To explore the relationship between FMI scores and the duration of meditative state, and the behavioural performance on non-declarative memory task, a series of Bayesian correlation tests were performed.
+Our tests showed anecdotal evidence (BF = 1.53) in favour of the *existence* of a positive association between the level of mindfulness (FMI) and the duration of meditative state (r = 0.34, MAD = 0.23, 90% CI [-0.046, 0.71]). The correlation can be considered as large, moderate, small or very small with respective probabilities of 23.43%, 33.27%, 27.05% and 8.12%.
+In addition, we found a moderate evidence (BF = 3.82) in favour of the *existence* of a positive association between the level of mindfulness (FMI) and the behavioural performance on non-declarative memory task (r = 0.47, MAD = 0.23, 90% CI [0.037, 0.82]). The correlation can be considered as large, moderate, small or very small with respective probabilities of 45.17%, 30.61%, 16.45% and 4.30%.
+
+
+```{r, include= FALSE}
+## I left the overall code for the record. the main excel file was somewhere else and probably has to be re-created again.
+
+#library(corrplot)
+#med_corr <- cor(Meditation_May2019,use = "pairwise.complete.obs")
+# corrplot(med_corr, method = "circle")
+#res1 <- cor.mtest(med_corr, conf.level = .95)
+#corrplot(med_corr, p.mat = res1$p, sig.level = .05, type = "upper") 
+
+#corrplot(med_corr, method = "circle", type = "upper")
+#### running it in Bayesian
+#library(psycho)
+#bayes_cor.test(Meditation_May2019$`Minutes  in meditative state`, Meditation_May2019$FMI)
+#summary(bayes_cor.test(Meditation_May2019$`Minutes  in meditative state`, Meditation_May2019$FMI))
+
+
+#bayes_cor.test(Meditation_May2019$`Difference of Medians`, Meditation_May2019$FMI)
+#summary(bayes_cor.test(Meditation_May2019$`Difference of Medians`, Meditation_May2019$FMI))
+```
+
+```{r,  fig.align="center", echo= FALSE, fig.cap = "Correlation plot of the duration of meditative state and behavioural performance, months of practice, and the level of mindfulness (FMI). \\label{corrosc}"}
+#preparing a correlation plot
+#med_corr <- cor(Meditation_RAW,use = "pairwise.complete.obs")
+#res1 <- cor.mtest(med_corr, conf.level = .95)
+#corrplot(med_corr, p.mat = res1$p, sig.level = .05, type = "upper") 
+knitr::include_graphics('Figures/Brain_osc.pdf')
+```
+\newpage
+
+#References
+
+

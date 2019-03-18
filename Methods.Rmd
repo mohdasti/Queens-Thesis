@@ -3,13 +3,13 @@ title: "Materials and Methods"
 author: "Mohammad Dastgheib"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
 output:
+  word_document: 
+    fig_caption: yes
   pdf_document:
     fig_caption: yes
     number_sections: yes
     includes:
       in_header: preamble-latex.tex
-  word_document: 
-    fig_caption: yes
 indent: true
 urlcolor: black
 linkcolor: black
@@ -188,7 +188,7 @@ TNR = \frac{TN}{TN + FP}
   The median is a robust measure of central tendency and is less affected by outliers and skewed data than the mean, making it a preferred measure when the data distribution is not symmetrical. Therefore, I decided to calculate the median of the last ten trials of the training session (trials 91-100), and compare that to the median of the first ten trials of the test (i.e., memory retention) session (trials 1-10). 
 
 ## Data analysis
-  Statistical analysis was performed using R (R Development Core Team, 2008) and the psycho [@makowski2018psycho], and the rstanarm [@gabry2016rstanarm] packages. The analysis was performed in the Bayesian framework as it was more reliable, with better accuracy in noisy or small data samples, a more straightforward interpretation and less prone to type I error [@van2014bayesian, @jarosz2014odds, @makowski2019dispositional, @wagenmakers2018bayesian]. The frequentist equivalent of statistical analysis, which returns similar results, as well as more details of Bayesian model can be found in the Appendix<!-- name of the page -->. Calculation of the sleep parameters relied on Microsoft Excel for Mac (Version 16.19; Microsoft).
+  Statistical analysis was performed using R (R Development Core Team, 2008) and the psycho [@makowski2018psycho], and the rstanarm [@gabry2016rstanarm] packages. The analysis was performed in the Bayesian framework as it was more reliable, with better accuracy in noisy or small data samples, a more straightforward interpretation and less prone to type I error [@van2014bayesian, @jarosz2014odds, @makowski2019dispositional, @wagenmakers2018bayesian]. The frequentist equivalent of statistical analysis, which returns similar results, as well as the central posterior uncertainty distribution intervals of the Bayesian models can be found in the Appendix K and L. Calculation of the sleep parameters relied on Microsoft Excel for Mac (Version 16.19; Microsoft).
 
 <!-- ### Assumptions
 For each ANOVA, I checked the following:
