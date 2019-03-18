@@ -118,7 +118,8 @@ posterior_GMean <- as.array(fit_GMean)
 dim(posterior_GMean)
 dimnames(posterior_GMean)
 color_scheme_set("red")
-mcmc_intervals(posterior_GMean, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma"))
+plot_title_Posterior_GMean <- ggtitle("Declarative memory", "median and 50% intervals (the thick segments) and 90% intervals (the thinner outer lines)")
+mcmc_intervals(posterior_GMean, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma")) + plot_title_Posterior_GMean
 
 
 #for nappers - comparing the GMean for sws and non-sws
@@ -224,7 +225,8 @@ posterior_Maze_nonSWS <- as.array(fit_Bayes_RM_nonSWS)
 dim(posterior_Maze_nonSWS)
 dimnames(posterior_Maze_nonSWS)
 color_scheme_set("red")
-mcmc_intervals(posterior_Maze_nonSWS, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma"))
+plot_title_Posterior_Maze_nonSWS <- ggtitle("Non-declarative memory - nonSWS", "median and 50% intervals (the thick segments) and 90% intervals (the thinner outer lines)")
+mcmc_intervals(posterior_Maze_nonSWS, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma")) + plot_title_Posterior_Maze_nonSWS
 
 
 ## with SWS
@@ -258,7 +260,7 @@ posterior_Maze_SWS <- as.array(fit_Bayes_RM_SWS)
 dim(posterior_Maze_SWS)
 dimnames(posterior_Maze_SWS)
 color_scheme_set("red")
-plot_title_Maze_SWS <- ggtitle("Central posterior uncertainty intervals", "median and 50% intervals (the thick segments) and 90% intervals (the thinner outer lines)")
+plot_title_Maze_SWS <- ggtitle("Non-declarative memory - nonSWS", "median and 50% intervals (the thick segments) and 90% intervals (the thinner outer lines)")
 mcmc_intervals(posterior_Maze_SWS, pars = c("(Intercept)", "ConditionNAP", "ConditionWAKE", "sigma")) + plot_title_Maze_SWS
 
 # plot of SWS percent and the time of sleep
