@@ -75,8 +75,8 @@ Queens-Thesis/
 
 **Institution**: Queen's University  
 **Program**: Master's Thesis in Psychology  
-**Supervisor**: Dr. [Supervisor Name]  
-**Year**: 2019-2021
+**Supervisor**: Dr. Hans Dringenberg
+**Year**: 2017-2020
 
 ## 📖 How to Use This Repository
 
