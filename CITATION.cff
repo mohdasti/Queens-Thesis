@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Dastgheib"
+    given-names: "Mohammad"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+title: "Napping and Meditation on Memory Consolidation: A Bayesian Analysis of Sleep and Wake States"
+version: "1.0.0"
+date-released: 2021-08-15
+url: "https://github.com/mohdasti/Queens-Thesis"
+license: MIT
+keywords:
+  - "memory consolidation"
+  - "meditation"
+  - "sleep"
+  - "EEG"
+  - "bayesian analysis"
+  - "cognitive psychology"
+abstract: "This study investigates the effects of napping and meditation on memory consolidation, examining whether meditation, as a state of wakefulness with sleep-like characteristics, can facilitate memory consolidation similar to sleep. The research compares declarative and non-declarative memory performance across three conditions: meditation, napping, and wakefulness, using Bayesian statistical analysis and EEG spectral analysis."
+type: "thesis"
+institution:
+  name: "Queen's University"
+  address: "Kingston, Ontario, Canada"
+  department: "Department of Psychology"
+preferred-citation:
+  type: "thesis"
+  authors:
+    - family-names: "Dastgheib"
+      given-names: "Mohammad"
+  title: "Napping and Meditation on Memory Consolidation: A Bayesian Analysis of Sleep and Wake States"
+  year: 2021
+  institution:
+    name: "Queen's University"
+    address: "Kingston, Ontario, Canada"
+  type: "Master's Thesis"

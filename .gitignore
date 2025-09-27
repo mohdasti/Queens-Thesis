@@ -1,30 +1,56 @@
-# History files
-.Rhistory
-.Rapp.history
-# Session Data files
-.RData
-# Example code in package build process
-*-Ex.R
-# Output files from R CMD build
-/*.tar.gz
-# Output files from R CMD check
-/*.Rcheck/
-# RStudio files
-.Rproj.user/
-# produced vignettes
-vignettes/*.html
-vignettes/*.pdf
-# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
-.httr-oauth
-# knitr and R markdown default cache directories
-/*_cache/
-/cache/
-# Temporary files created by R markdown
-*.utf8.md
-*.knit.md
-# Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
-rsconnect/
+# R
 .Rproj.user
-r-references.bib
-Methods.pdf
-Appendix.pdf
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+*.nav
+*.snm
+*.vrb
+
+# PDF outputs (keep main thesis but ignore temporary ones)
+temp_*.pdf
+draft_*.pdf
+
+# Data files (keep structure but ignore large temporary files)
+*.tmp
+*.temp
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Cache directories
+.cache/
+__pycache__/
+
+# Temporary files
+*~
+*.bak
+*.orig

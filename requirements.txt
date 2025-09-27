@@ -1,0 +1,41 @@
+# R Package Requirements for Queens-Thesis
+# Install using: install.packages(c("package1", "package2", ...))
+
+# Core analysis packages
+papaja>=0.1.0.9997
+rstanarm>=2.21.1
+psycho>=0.6.1
+tidyverse>=1.3.0
+ggplot2>=3.3.0
+
+# Data manipulation and analysis
+rio>=0.5.16
+dplyr>=1.0.0
+readxl>=1.3.1
+Hmisc>=4.4.0
+
+# Statistical analysis
+lmerTest>=3.1.0
+corrplot>=0.84
+bayesplot>=1.7.0
+
+# Visualization
+jtools>=2.1.0
+magrittr>=2.0.0
+
+# Development and utilities
+devtools>=2.3.0
+knitr>=1.28
+rmarkdown>=2.3
+
+# EEG analysis (if needed)
+eegkit>=1.0.0
+eegkitdata>=1.0.0
+bigsplines>=1.1.0
+quadprog>=1.5.8
+ica>=1.0.2
+signal>=0.7.6
+rgl>=0.100.0
+
+# Note: Some packages may require system dependencies
+# For LaTeX compilation, ensure you have a LaTeX distribution installed

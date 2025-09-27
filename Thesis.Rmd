@@ -1,48 +1,36 @@
 ---
-title             : "The title"
-shorttitle        : "Title"
+title             : "Napping and Meditation on Memory Consolidation: A Bayesian Analysis of Sleep and Wake States"
+shorttitle        : "Memory Consolidation in Sleep and Meditation"
 
 author: 
-  - name          : "First Author"
+  - name          : "Mohammad Dastgheib"
     affiliation   : "1"
-    corresponding : yes    # Define only one corresponding author
-    address       : "Postal address"
-    email         : "my@email.com"
-  - name          : "Ernst-August Doelle"
-    affiliation   : "1,2"
+    corresponding : yes
+    address       : "Department of Psychology, Queen's University, Kingston, ON, Canada"
+    email         : "mohammad.dastgheib@queensu.ca"
 
 affiliation:
   - id            : "1"
-    institution   : "Wilhelm-Wundt-University"
-  - id            : "2"
-    institution   : "Konstanz Business School"
+    institution   : "Queen's University"
 
 authornote: |
-  Add complete departmental affiliations for each author here. Each new line herein must be indented, like this line.
-
-  Enter author note here.
+  This research was conducted as part of a Master's thesis in the Department of Psychology at Queen's University, Kingston, Ontario, Canada. The author would like to thank the participants and the Sleep & Neuroplasticity Laboratory for their contributions to this research.
 
 abstract: |
-  One or two sentences providing a **basic introduction** to the field,  comprehensible to a scientist in any discipline.
+  **Background:** Decades of research have established that sleep facilitates memory consolidation, but the specific mechanisms and whether similar effects occur in wakeful states remain unclear. Meditation, characterized by reduced sensory processing and specific EEG patterns, may share neurophysiological features with sleep that could support memory consolidation.
   
-  Two to three sentences of **more detailed background**, comprehensible  to scientists in related disciplines.
+  **Objective:** This study investigated whether meditation, as a wakeful state with sleep-like characteristics, can facilitate memory consolidation similar to sleep, comparing three conditions: meditation, napping, and wakefulness.
   
-  One sentence clearly stating the **general problem** being addressed by  this particular study.
+  **Method:** Sixty-four participants completed declarative (paired-associate learning) and non-declarative (marble maze) memory tasks before and after 60-minute interventions. EEG was recorded during interventions. Bayesian statistical analysis was used to compare memory performance across conditions.
   
-  One sentence summarizing the main result (with the words "**here we show**" or their equivalent).
+  **Results:** Meditation showed superior declarative memory consolidation compared to wakefulness (97.42% probability). Sleep stage analysis revealed that slow-wave sleep had adverse effects on procedural memory, while meditation showed benefits over both sleep and wake conditions. Gender differences were observed in both memory systems.
   
-  Two or three sentences explaining what the **main result** reveals in direct comparison to what was thought to be the case previously, or how the  main result adds to previous knowledge.
+  **Conclusions:** These findings suggest that meditation can facilitate memory consolidation through mechanisms that may overlap with those of sleep, providing evidence for the role of reduced sensory processing and specific neural oscillations in memory consolidation processes.
   
-  One or two sentences to put the results into a more **general context**.
-  
-  Two or three sentences to provide a **broader perspective**, readily comprehensible to a scientist in any discipline.
-  
-  <!-- https://tinyurl.com/ybremelq -->
-  
-keywords          : "keywords"
-wordcount         : "X"
+keywords          : "memory consolidation, meditation, sleep, EEG, bayesian analysis, declarative memory, procedural memory"
+wordcount         : "15,000"
 
-bibliography      : ["r-references.bib"]
+bibliography      : ["References.bib", "r_references.bib"]
 
 floatsintext      : no
 figurelist        : no
@@ -70,21 +58,52 @@ knitr::opts_chunk$set(cache.extra = knitr::rand_seed)
 
 
 # Methods
+
 We report how we determined our sample size, all data exclusions (if any), all manipulations, and all measures in the study. <!-- 21-word solution (Simmons, Nelson & Simonsohn, 2012; retrieved from http://ssrn.com/abstract=2160588) -->
 
 ## Participants
 
-## Material
+Sixty-four participants (mean age = 22.8 ± 8.1 years, 35 female) were recruited from Queen's University. Participants were randomly assigned to one of three conditions: meditation (n = 25), napping (n = 21), or wakefulness (n = 18). Inclusion criteria required participants to be 18-65 years old with no psychiatric, neurological, or sleep disorders. Meditation participants had ≥3 meditation sessions/week; napping participants had ≥3 naps/week over the previous three weeks.
+
+## Materials
+
+### Memory Tasks
+
+**Declarative Memory**: Paired-associate word learning task with 60 word pairs presented for 5 seconds each, followed by recognition testing with 20 old, 20 recombined, and 20 novel pairs.
+
+**Non-declarative Memory**: Marble maze visuomotor task requiring participants to guide a marble through a maze using two control knobs. Training consisted of 100 trials; testing consisted of 50 trials.
+
+### Self-Report Measures
+
+- **Epworth Sleepiness Scale (ESS)**: Modified to assess current sleepiness
+- **Freiburg Mindfulness Inventory (FMI)**: Assessed dispositional mindfulness
+- **Condition-specific questionnaires**: Rated quality of meditation, sleep, or wake experience
 
 ## Procedure
 
-## Data analysis
-We used `r cite_r("r-references.bib")` for all our analyses.
+Participants completed two sessions: an initial interview and the main experiment. During the experiment, participants completed pre-intervention memory tasks, then underwent a 60-minute intervention (meditation, napping, or watching a documentary) while EEG was recorded. Post-intervention, participants completed memory tasks and self-report measures.
 
+## Data Analysis
+
+We used `r cite_r("r_references.bib")` for all our analyses. Bayesian inference was performed using Markov Chain Monte Carlo (MCMC) with 4 chains, 2000 iterations, and 1000 warmup samples. Memory performance was assessed using Geometric Mean for declarative memory and median differences for non-declarative memory. We reported median estimates, median absolute deviation (MAD), and 90% credible intervals.
 
 # Results
 
+## Declarative Memory
+
+Meditation showed superior performance compared to wakefulness (97.42% probability, median = -0.073, MAD = 0.038, 90% CI [-0.14, -0.014]). No significant difference was found between meditation and napping conditions.
+
+## Non-declarative Memory
+
+Sleep stage analysis revealed that participants who entered slow-wave sleep (SWS) performed significantly worse than those who remained in lighter sleep stages (96.23% probability, median = -1.25, MAD = 0.67, 90% CI [-2.40, -0.096]). Meditation showed benefits over both SWS and wake conditions.
+
+## Exploratory Analyses
+
+Gender differences were observed in both memory systems, with females showing better declarative memory performance and males showing better procedural memory performance.
+
 # Discussion
+
+These findings provide evidence that meditation can facilitate memory consolidation through mechanisms that may overlap with those of sleep. The differential effects of sleep stages on memory consolidation suggest that specific neural oscillations, rather than sleep per se, may be crucial for memory processes. These results have implications for understanding memory consolidation mechanisms and potential therapeutic applications of meditation in cognitive enhancement.
 
 
 \newpage
