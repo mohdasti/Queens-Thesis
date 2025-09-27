@@ -107,7 +107,7 @@ This is a completed thesis project. For questions or clarifications, please open
 ## 📧 Contact
 
 **Mohammad Dastgheib**  
-Email: [Your Email]  
+Email: m.dastgheib@gmail.com 
 GitHub: [@mohdasti](https://github.com/mohdasti)
 
 ---
